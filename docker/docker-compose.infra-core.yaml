@@ -4,9 +4,6 @@ networks:
   proxy:
     name: proxy
     external: true
-  observability:
-    name: observability
-    external: true
 
 services:
   nginx-proxy-manager:
@@ -22,7 +19,8 @@ services:
       - /srv/npm/letsencrypt:/etc/letsencrypt
     environment:
       TZ: America/Sao_Paulo
-    networks: [proxy]
+    networks:
+      - proxy
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:81 || exit 1"]
       interval: 30s
@@ -43,7 +41,6 @@ services:
       TZ: America/Sao_Paulo
     networks:
       - proxy
-      - observability
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
@@ -60,26 +57,26 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - proxy
-      - observability
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
   lgtm:
-    image: grafana/lgtm:latest
+    image: grafana/otel-lgtm:latest
     container_name: lgtm
     restart: unless-stopped
     environment:
-      TZ: America/Sao_Paulo
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin}
+      TZ: America/Sao_Paulo
     volumes:
-      - /mnt/sokolov/containers/lgtm/grafana:/var/lib/grafana
-      - /srv/infra/data/prometheus:/prometheus
-      - /srv/infra/data/loki:/loki
-      - /srv/infra/data/tempo:/var/tempo
+      - /srv/infra/lgtm/grafana:/var/lib/grafana
+      - /srv/infra/lgtm/data:/data
+    ports:
+      - "9090:9090" # Prometheus scrape
+      - "3100:3100" # Loki logs
+      - "3200:3200" # Tempo traces
     networks:
       - proxy
-      - observability
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:3000/api/health || exit 1"]
       interval: 30s
@@ -106,8 +103,6 @@ services:
       - /opt/alloy/core/alloy.hcl:/etc/alloy/alloy.hcl:ro
     environment:
       - TZ=America/Sao_Paulo
-    networks:
-      - observability
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
@@ -121,7 +116,5 @@ services:
       - /opt/pve-exporter/pve.yml:/etc/prometheus/pve.yml:ro
     environment:
       - TZ=America/Sao_Paulo
-    networks:
-      - observability
     labels:
       - com.centurylinklabs.watchtower.enable=true
