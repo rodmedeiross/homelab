@@ -41,11 +41,11 @@ services:
     image: docker/mcp-gateway:latest
     container_name: mcp-gateway
     restart: unless-stopped
-    # Transport "streaming" expõe HTTP/WS para vários clientes
+    # Transport "streaming" exposes HTTP/WS for multiple clients
     command:
       - --transport=streaming
       - --port=8811
-      # Habilite servidores MCP do catálogo (exemplos abaixo). Adicione/remova conforme precisar:
+      # Enable MCP servers from catalog (examples below). Add/remove as needed:
       - --servers=duckduckgo
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw

@@ -20,14 +20,14 @@ services:
             - driver: nvidia
               capabilities: ["gpu"]
     ports:
-      - "11434:11434" # API HTTP do Ollama (restrinja no firewall se preferir)
+      - "11434:11434" # Ollama HTTP API (restrict in firewall if preferred)
     volumes:
       - ${AI_PATH}/ollama:/root/.ollama:rw
     networks: [ai_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  # ===== OPCIONAIS (exemplos) — comente/descomente quando for usar =====
+  # ===== OPTIONAL (examples) — comment/uncomment when using =====
   # whisper:
   #   image: ghcr.io/ggerganov/whisper.cpp:latest
   #   container_name: whisper
