@@ -1,0 +1,106 @@
+name: media-core
+
+networks:
+  media_net:
+    name: media_net
+  proxy:
+    external: true
+
+x-common-env: &common-env
+  TZ: America/Sao_Paulo
+  PUID: 1000
+  PGID: 1000
+
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      WEBUI_PORT: 8080
+    ports:
+      - "6881:6881"
+      - "6881:6881/udp"
+    volumes:
+      - /srv/media/qbittorrent/config:/config:rw
+      - /mnt/sokolov/media/Downloads/torrents:/downloads:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  jackett:
+    image: ghcr.io/linuxserver/jackett:latest
+    container_name: jackett
+    restart: unless-stopped
+    environment: *common-env
+    volumes:
+      - /srv/media/jackett/config:/config
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    environment: *common-env
+    volumes:
+      - /srv/media/radarr/config:/config:rw
+      - /mnt/sokolov/media/Videos/radarr/movies:/movies:rw
+      - /mnt/sokolov/media/Videos/radarr/animes:/animes:rw
+      - /mnt/sokolov/media/Downloads/torrents:/downloads:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    environment: *common-env
+    volumes:
+      - /srv/media/sonarr/config:/config:rw
+      - /mnt/sokolov/media/Videos/sonarr/series:/series:rw
+      - /mnt/sokolov/media/Downloads/torrents:/downloads:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    environment: *common-env
+    volumes:
+      - /srv/media/prowlarr/config:/config:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    restart: unless-stopped
+    environment: *common-env
+    volumes:
+      - /srv/media/bazarr/config:/config:rw
+      - /mnt/sokolov/media/Videos/radarr/movies:/movies:rw
+      - /mnt/sokolov/media/Videos/radarr/animes:/animes:rw
+      - /mnt/sokolov/media/Videos/sonarr/series:/series:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      LOG_LEVEL: info
+    volumes:
+      - /srv/media/overseerr/config:/app/config:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true

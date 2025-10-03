@@ -1,0 +1,127 @@
+name: core-infra
+
+networks:
+  proxy:
+    name: proxy
+    external: true
+  observability:
+    name: observability
+    external: true
+
+services:
+  nginx-proxy-manager:
+    image: jc21/nginx-proxy-manager:2.11.3
+    container_name: npm
+    restart: unless-stopped
+    ports:
+      - "10.10.1.20:80:80"
+      - "10.10.1.20:81:81"
+      - "10.10.1.20:443:443"
+    volumes:
+      - /srv/npm/data:/data
+      - /srv/npm/letsencrypt:/etc/letsencrypt
+    environment:
+      TZ: America/Sao_Paulo
+    networks: [proxy]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:81 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  portainer:
+    image: portainer/portainer-ce:2.21.4
+    container_name: portainer
+    restart: unless-stopped
+    command: ["--http-enabled"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /srv/portainer/data:/data:rw
+    environment:
+      TZ: America/Sao_Paulo
+    networks:
+      - proxy
+      - observability
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      TZ: America/Sao_Paulo
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_LABEL_ENABLE: "true"
+      WATCHTOWER_SCHEDULE: "0 0 5 * * *"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - proxy
+      - observability
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  lgtm:
+    image: grafana/lgtm:0.7.0
+    container_name: lgtm
+    restart: unless-stopped
+    environment:
+      TZ: America/Sao_Paulo
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin}
+    volumes:
+      - /mnt/sokolov/containers/lgtm/grafana:/var/lib/grafana
+      - /srv/infra/data/prometheus:/prometheus
+      - /srv/infra/data/loki:/loki
+      - /srv/infra/data/tempo:/var/tempo
+    networks:
+      - proxy
+      - observability
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  alloy:
+    image: grafana/alloy:latest
+    container_name: alloy
+    restart: unless-stopped
+    user: "0:0"
+    command: ["run", "/etc/alloy/alloy.hcl"]
+    ports:
+      - "9200:9200" # Prometheus scrape (métricas do host/containers do core)
+      - "1514:1514/tcp" # syslog receiver (Proxmox/VMs)
+      - "1514:1514/udp"
+    volumes:
+      - /:/host:ro,rslave
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log:/var/log:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/alloy/core/alloy.hcl:/etc/alloy/alloy.hcl:ro
+    environment:
+      - TZ=America/Sao_Paulo
+    networks:
+      - observability
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  pve-exporter:
+    image: prompve/prometheus-pve-exporter:latest
+    container_name: pve-exporter
+    restart: unless-stopped
+    ports:
+      - "9221:9221"
+    volumes:
+      - /opt/pve-exporter/pve.yml:/etc/prometheus/pve.yml:ro
+    environment:
+      - TZ=America/Sao_Paulo
+    networks:
+      - observability
+    labels:
+      - com.centurylinklabs.watchtower.enable=true

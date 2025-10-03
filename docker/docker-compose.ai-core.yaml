@@ -1,0 +1,67 @@
+name: ai-core
+
+networks:
+  ai_net:
+    name: ai_net
+  proxy:
+    external: true
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: ["gpu"]
+    ports:
+      - "11434:11434" # API HTTP do Ollama (restrinja no firewall se preferir)
+    volumes:
+      - ${AI_PATH}/ollama:/root/.ollama:rw
+    networks: [ai_net]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  # ===== OPCIONAIS (exemplos) — comente/descomente quando for usar =====
+  # whisper:
+  #   image: ghcr.io/ggerganov/whisper.cpp:latest
+  #   container_name: whisper
+  #   restart: unless-stopped
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             capabilities: ["gpu"]
+  #   environment:
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${AI_PATH}/whisper:/data:rw
+  #   networks: [ai_net]
+  #   labels:
+  #     - com.centurylinklabs.watchtower.enable=true
+
+  # comfyui:
+  #   image: ghcr.io/comfyanonymous/comfyui:latest
+  #   container_name: comfyui
+  #   restart: unless-stopped
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             capabilities: ["gpu"]
+  #   environment:
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ${AI_PATH}/comfyui:/root/ComfyUI:rw
+  #   ports:
+  #     - "8188:8188"
+  #   networks: [ai_net, proxy]
+  #   labels:
+  #     - com.centurylinklabs.watchtower.enable=true
