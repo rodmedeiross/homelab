@@ -10,7 +10,7 @@ networks:
 
 services:
   nginx-proxy-manager:
-    image: jc21/nginx-proxy-manager:2.11.3
+    image: jc21/nginx-proxy-manager:latest
     container_name: npm
     restart: unless-stopped
     ports:
@@ -32,7 +32,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   portainer:
-    image: portainer/portainer-ce:2.21.4
+    image: portainer/portainer-ce:latest
     container_name: portainer
     restart: unless-stopped
     command: ["--http-enabled"]
@@ -48,7 +48,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   watchtower:
-    image: containrrr/watchtower:1.7.1
+    image: containrrr/watchtower:latest
     container_name: watchtower
     restart: unless-stopped
     environment:
@@ -65,7 +65,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   lgtm:
-    image: grafana/lgtm:0.7.0
+    image: grafana/lgtm:latest
     container_name: lgtm
     restart: unless-stopped
     environment:

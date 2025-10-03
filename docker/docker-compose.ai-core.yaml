@@ -1,11 +1,5 @@
 name: ai-core
 
-networks:
-  ai_net:
-    name: ai_net
-  proxy:
-    external: true
-
 services:
   ollama:
     image: ollama/ollama:latest
@@ -23,7 +17,6 @@ services:
       - "11434:11434" # Ollama HTTP API (restrict in firewall if preferred)
     volumes:
       - ${AI_PATH}/ollama:/root/.ollama:rw
-    networks: [ai_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true
 

@@ -1,8 +1,6 @@
 name: ai-client
 
 networks:
-  ai_net:
-    external: true
   proxy:
     external: true
 
@@ -16,7 +14,7 @@ services:
       - OLLAMA_BASE_URL=http://ollama:11434
     volumes:
       - /srv/ai/openwebui/data:/app/backend/data:rw
-    networks: [ai_net, proxy]
+    networks: [proxy]
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
@@ -32,7 +30,7 @@ services:
       - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-change-me}
       - GENERIC_TIMEZONE=${TZ}
     volumes:
-      - /srv/ai/n8n:/home/node/.n8n:rw
+      - /srv/n8n:/home/node/.n8n:rw
     networks: [proxy]
     labels:
       - com.centurylinklabs.watchtower.enable=true
@@ -51,6 +49,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:rw
     ports:
       - "8811:8811"
-    networks: [ai_net, proxy]
+    networks: [proxy]
     labels:
       - com.centurylinklabs.watchtower.enable=true
