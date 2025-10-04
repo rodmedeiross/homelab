@@ -53,7 +53,7 @@ services:
       - /:/host:ro,rslave
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
-      - ./lgtm:/etc/alloy:ro
+      - ../lgtm:/etc/alloy:ro
       - /run/udev:/run/udev:ro
     ports:
       - "10.10.1.30:9200:9200"
