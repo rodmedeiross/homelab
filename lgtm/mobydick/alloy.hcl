@@ -85,10 +85,11 @@ discovery.relabel "mobydick_docker_logs" {
 
 // Collect Docker container logs
 loki.source.docker "mobydick_containers" {
-  host       = "unix:///var/run/docker.sock"
-  targets    = discovery.relabel.mobydick_docker_logs.output
-  labels     = { platform = "docker", host = "mobydick" }
-  forward_to = [loki.write.default.receiver]
+  host             = "unix:///var/run/docker.sock"
+  targets          = discovery.relabel.mobydick_docker_logs.output
+  labels           = { platform = "docker", host = "mobydick" }
+  forward_to       = [loki.write.default.receiver]
+  refresh_interval = "5s"
 }
 
 // Send logs to Loki (LGTM)
