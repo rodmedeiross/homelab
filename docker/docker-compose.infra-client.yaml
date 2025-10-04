@@ -48,12 +48,12 @@ services:
     command:
       - run
       - --server.http.listen-addr=0.0.0.0:12345
-      - /etc/alloy/alloy.hcl
+      - /etc/alloy/mobydick/alloy.hcl
     volumes:
       - /:/host:ro,rslave
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
-      - /opt/alloy:/etc/alloy:ro
+      - ./lgtm:/etc/alloy:ro
       - /run/udev:/run/udev:ro
     ports:
       - "10.10.1.30:9200:9200"
