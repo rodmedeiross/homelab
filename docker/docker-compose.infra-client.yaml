@@ -45,14 +45,18 @@ services:
     container_name: alloy
     restart: unless-stopped
     user: "0:0"
-    command: ["run", "/etc/alloy/alloy.hcl"]
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/alloy/alloy.hcl
     volumes:
       - /:/host:ro,rslave
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
       - /opt/alloy:/etc/alloy:ro
     ports:
-      - "9200:9200"
+      - "10.10.1.30:9200:9200"
+      - "10.10.1.30:12345:12345"
     environment:
       - TZ=America/Sao_Paulo
     labels:
