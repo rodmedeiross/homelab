@@ -35,6 +35,16 @@ prometheus.scrape "willy_metrics" {
   scrape_interval = "15s"
 }
 
+// Scrape PVE exporter metrics
+prometheus.scrape "pve_metrics" {
+  targets = [{
+    __address__ = "pve-exporter:9221"
+  }]
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "30s"
+  job_name = "proxmox"
+}
+
 // Send metrics to Prometheus (local LGTM)
 prometheus.remote_write "default" {
   endpoint {
