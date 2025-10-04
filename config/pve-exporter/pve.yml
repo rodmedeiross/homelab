@@ -1,0 +1,18 @@
+default:
+  user: monitoring@pve
+  password: ${PVE_PASSWORD:-your_password_here}
+  verify_ssl: false
+  target: ${PVE_HOST:-localhost}
+# Example configuration for Proxmox VE exporter
+# Replace with your actual Proxmox credentials and settings
+
+# Multiple PVE nodes can be configured like this:
+# pve1:
+#   user: monitoring@pve
+#   password: password1
+#   verify_ssl: false
+#
+# pve2:
+#   user: monitoring@pve
+#   password: password2
+#   verify_ssl: false

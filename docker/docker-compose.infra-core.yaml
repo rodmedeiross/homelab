@@ -104,6 +104,7 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/log:/var/log:ro
       - /var/run/docker.sock:/var/run/docker.sock
+      - /run/udev:/run/udev:ro
       - ../lgtm:/etc/alloy:ro
     environment:
       - TZ=America/Sao_Paulo
@@ -119,7 +120,7 @@ services:
     ports:
       - "9221:9221"
     volumes:
-      - /opt/pve-exporter/pve.yml:/etc/prometheus/pve.yml:ro
+      - ../config/pve-exporter/pve.yml:/etc/prometheus/pve.yml:ro
     environment:
       - TZ=America/Sao_Paulo
     labels:
