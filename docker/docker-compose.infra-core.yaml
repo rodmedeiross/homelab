@@ -98,7 +98,6 @@ services:
       - "9200:9200" # Prometheus scrape (core host/containers metrics)
       - "1514:1514/tcp" # syslog receiver (Proxmox/VMs)
       - "1514:1514/udp"
-      - "10.10.1.20:12345:12345" # Alloy UI/CLI
     volumes:
       - /:/host:ro,rslave
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
