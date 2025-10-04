@@ -38,7 +38,7 @@ prometheus.scrape "willy_metrics" {
 // Scrape PVE exporter metrics
 prometheus.scrape "pve_metrics" {
   targets = [{
-    __address__ = "pve-exporter:9221"
+    __address__ = "pve-exporter:9221",
   }]
   forward_to = [prometheus.remote_write.default.receiver]
   scrape_interval = "30s"
