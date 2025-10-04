@@ -90,19 +90,25 @@ services:
     container_name: alloy
     restart: unless-stopped
     user: "0:0"
-    command: ["run", "/etc/alloy/alloy.hcl"]
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - /etc/alloy/willy/alloy.hcl
     ports:
       - "9200:9200" # Prometheus scrape (core host/containers metrics)
       - "1514:1514/tcp" # syslog receiver (Proxmox/VMs)
       - "1514:1514/udp"
+      - "10.10.1.20:12345:12345" # Alloy UI/CLI
     volumes:
       - /:/host:ro,rslave
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/log:/var/log:ro
       - /var/run/docker.sock:/var/run/docker.sock
-      - /opt/alloy/core/alloy.hcl:/etc/alloy/alloy.hcl:ro
+      - ../lgtm:/etc/alloy:ro
     environment:
       - TZ=America/Sao_Paulo
+    networks:
+      - proxy
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
