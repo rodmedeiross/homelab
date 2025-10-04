@@ -48,6 +48,7 @@ services:
     command:
       - run
       - --server.http.listen-addr=0.0.0.0:12345
+      - --enable-features=integrations-next
       - /etc/alloy/mobydick/alloy.hcl
     volumes:
       - /:/host:ro,rslave
