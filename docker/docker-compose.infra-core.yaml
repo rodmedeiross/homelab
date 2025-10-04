@@ -122,5 +122,7 @@ services:
       - ../config/pve-exporter/pve.yml:/etc/prometheus/pve.yml:ro
     environment:
       - TZ=America/Sao_Paulo
+    networks:
+      - proxy
     labels:
       - com.centurylinklabs.watchtower.enable=true
