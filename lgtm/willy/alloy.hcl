@@ -4,6 +4,11 @@ logging {
   format = "logfmt"
 }
 
+// Live debugging configuration
+livedebugging {
+  enabled = true
+}
+
 // Node exporter for system metrics
 prometheus.exporter.unix "willy" {
   procfs_path = "/host/proc"
