@@ -54,6 +54,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/log:/var/log:ro
       - /opt/alloy:/etc/alloy:ro
+      - /run/udev:/run/udev:ro
     ports:
       - "10.10.1.30:9200:9200"
       - "10.10.1.30:12345:12345"
