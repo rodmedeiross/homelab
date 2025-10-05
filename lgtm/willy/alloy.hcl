@@ -50,10 +50,10 @@ prometheus.scrape "pve_metrics" {
   job_name = "proxmox"
   metrics_path = "/pve"
   params = {
-    target = ["outerheaven.network"]
-    cluster = ["1"]
-    node = ["1"]
-    module = ["default"]
+    target = ["outerheaven.network"],
+    cluster = ["1"],
+    node = ["1"],
+    module = ["default"],
   }
 }
 
