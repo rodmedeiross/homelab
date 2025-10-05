@@ -48,6 +48,13 @@ prometheus.scrape "pve_metrics" {
   forward_to = [prometheus.remote_write.default.receiver]
   scrape_interval = "30s"
   job_name = "proxmox"
+  metrics_path = "/pve"
+  params = {
+    target = ["outerheaven.network"]
+    cluster = ["1"]
+    node = ["1"]
+    module = ["default"]
+  }
 }
 
 // Send metrics to Prometheus (local LGTM)

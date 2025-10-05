@@ -119,10 +119,13 @@ services:
     restart: unless-stopped
     ports:
       - "9221:9221"
-    volumes:
-      - ../config/pve-exporter/pve.yml:/etc/prometheus/pve.yml:ro
+
     environment:
       - TZ=America/Sao_Paulo
+      - PVE_USER=${PVE_USER:-monitoring@pve}
+      - PVE_PASSWORD=${PVE_PASSWORD}
+      - PVE_VERIFY_SSL=${PVE_VERIFY_SSL:-false}
+      - PVE_MODULE=${PVE_MODULE:-default}
     networks:
       - proxy
     labels:
