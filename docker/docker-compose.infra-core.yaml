@@ -93,6 +93,7 @@ services:
     command:
       - run
       - --server.http.listen-addr=0.0.0.0:12345
+      - --disable-reporting
       - /etc/alloy/willy/alloy.hcl
     ports:
       - "9200:9200" # Prometheus scrape (core host/containers metrics)
