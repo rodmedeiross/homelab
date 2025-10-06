@@ -67,9 +67,12 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASS:-admin}
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "true"
+      GF_ANALYTICS_FEEDBACK_LINKS_ENABLED: "false"
       TZ: America/Sao_Paulo
     volumes:
-      - /srv/infra/lgtm/grafana:/var/lib/grafana
       - /srv/infra/lgtm/data:/data
     ports:
       - "9090:9090" # Prometheus scrape
