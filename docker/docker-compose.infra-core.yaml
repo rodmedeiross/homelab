@@ -117,9 +117,6 @@ services:
     image: prompve/prometheus-pve-exporter:latest
     container_name: pve-exporter
     restart: unless-stopped
-    ports:
-      - "9221:9221"
-
     environment:
       - TZ=America/Sao_Paulo
       - PVE_USER=${PVE_USER:-monitoring@pve}
