@@ -15,18 +15,10 @@ loki.source.journal "proxmox_systemd" {
     host = "outerheaven",
     platform = "proxmox",
   }
-  journal_fields = {
-    "_SYSTEMD_UNIT" = [
-      "pvedaemon.service",
-      "pveproxy.service",
-      "pvestatd.service",
-      "pve-cluster.service",
-      "corosync.service",
-    ]
-  }
   forward_to = [loki.write.to_lgtm.receiver]
 }
 
+// ========= SPECIFIC LOGS =========
 loki.source.file "proxmox_logs" {
   targets = [
     // Standard Proxmox logs
@@ -40,6 +32,12 @@ loki.source.file "proxmox_logs" {
       __path__ = "/var/log/pve-firewall.log",
       job = "pve-firewall",
       log_type = "firewall",
+      service = "proxmox",
+    },
+    {
+      __path__ = "/var/log/daemon.log",
+      job = "pve-daemon",
+      log_type = "system",
       service = "proxmox",
     },
     {
