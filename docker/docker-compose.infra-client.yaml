@@ -30,6 +30,8 @@ services:
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
       - WATCHTOWER_SCHEDULE=0 0 5 * * *
+      - WATCHTOWER_HTTP_API_METRICS=true
+      - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_TOKEN:-watchtower-secret}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     logging:
@@ -57,9 +59,9 @@ services:
       - ../lgtm:/etc/alloy:ro
       - /run/udev:/run/udev:ro
     ports:
-      - "10.10.1.30:9200:9200"
       - "10.10.1.30:12345:12345"
     environment:
       - TZ=America/Sao_Paulo
+      - WATCHTOWER_TOKEN=${WATCHTOWER_TOKEN:-watchtower-secret}
     labels:
       - com.centurylinklabs.watchtower.enable=true

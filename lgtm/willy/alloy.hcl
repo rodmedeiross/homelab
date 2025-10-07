@@ -57,11 +57,109 @@ prometheus.scrape "pve_metrics" {
   }
 }
 
+// Scrape Watchtower metrics (local only)
+prometheus.scrape "watchtower_local" {
+  targets = [{
+    __address__ = "watchtower:8080",
+  }]
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "30s"
+  job_name = "watchtower"
+  metrics_path = "/v1/metrics"
+  bearer_token = sys.env("WATCHTOWER_TOKEN")
+  extra_labels = {
+    host = "willy",
+    service = "watchtower",
+  }
+}
+
+// Scrape Alloy self-metrics
+prometheus.scrape "alloy_self" {
+  targets = [{
+    __address__ = "127.0.0.1:12345",
+  }]
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "15s"
+  job_name = "alloy"
+  metrics_path = "/metrics"
+  extra_labels = {
+    host = "willy",
+    service = "alloy",
+  }
+}
+
 // Send metrics to Prometheus (local LGTM)
 prometheus.remote_write "default" {
   endpoint {
     url = "http://lgtm:9090/api/v1/write"
   }
+}
+
+// ========= SYSLOG FROM PROXMOX VMs/LXCs =========
+loki.source.syslog "proxmox_vms" {
+  listener {
+    address = "0.0.0.0:1514"
+    protocol = "tcp"
+  }
+  listener {
+    address = "0.0.0.0:1514"
+    protocol = "udp"
+  }
+  labels = {
+    job = "proxmox-vms",
+    platform = "proxmox-guest",
+  }
+  forward_to = [loki.process.parse_proxmox_vm_logs.receiver]
+}
+
+// Process Proxmox VM/LXC logs
+loki.process "parse_proxmox_vm_logs" {
+  stage.static_labels {
+    values = {
+      platform = "proxmox-guest",
+      source = "syslog",
+    }
+  }
+
+  // Extract hostname from syslog message
+  stage.regex {
+    expression = `^<\d+>.*?\s+(?P<vm_hostname>\S+)\s+`
+  }
+
+  // Extract service/program name
+  stage.regex {
+    expression = `\s+(?P<program>[^:\[\s]+)(?:\[(?P<pid>\d+)\])?:\s*`
+  }
+
+  // Extract facility and severity
+  stage.regex {
+    expression = `^<(?P<priority>\d+)>`
+  }
+
+  // Calculate facility and severity from priority
+  stage.template {
+    source = "priority"
+    template = "{{ div .Value 8 }}"
+    target = "facility"
+  }
+
+  stage.template {
+    source = "priority"
+    template = "{{ mod .Value 8 }}"
+    target = "severity"
+  }
+
+  stage.labels {
+    values = {
+      vm_hostname = "",
+      program = "",
+      pid = "",
+      facility = "",
+      severity = "",
+    }
+  }
+
+  forward_to = [loki.write.default.receiver]
 }
 
 // Docker container discovery
