@@ -13,7 +13,7 @@ loki.source.journal "proxmox_systemd" {
   labels = {
     job = "proxmox-journal",
     host = "outerheaven",
-    platform = "proxmox"
+    platform = "proxmox",
   }
   journal_fields = {
     "_SYSTEMD_UNIT" = [
@@ -21,7 +21,7 @@ loki.source.journal "proxmox_systemd" {
       "pveproxy.service",
       "pvestatd.service",
       "pve-cluster.service",
-      "corosync.service"
+      "corosync.service",
     ]
   }
   forward_to = [loki.write.to_lgtm.receiver]
@@ -34,38 +34,38 @@ loki.source.file "proxmox_logs" {
       __path__ = "/var/log/pve/tasks/*/*",
       job = "pve-tasks",
       log_type = "tasks",
-      service = "proxmox"
+      service = "proxmox",
     },
     {
       __path__ = "/var/log/pve-firewall.log",
       job = "pve-firewall",
       log_type = "firewall",
-      service = "proxmox"
+      service = "proxmox",
     },
     {
       __path__ = "/var/log/syslog",
       job = "pve-syslog",
       log_type = "system",
-      service = "proxmox"
+      service = "proxmox",
     },
     {
       __path__ = "/var/log/auth.log",
       job = "pve-auth",
       log_type = "auth",
-      service = "proxmox"
+      service = "proxmox",
     },
 
     {
       __path__ = "/var/log/vm-scheduler.log",
       job = "vm-scheduler",
       log_type = "scheduler",
-      service = "custom-scripts"
+      service = "custom-scripts",
     },
     {
       __path__ = "/var/run/qemu-gpu-guard/trace.log",
       job = "gpu-guard",
       log_type = "gpu-passthrough",
-      service = "custom-scripts"
+      service = "custom-scripts",
     },
   ]
 
