@@ -143,6 +143,21 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      LOG_LEVEL: info
+      LOG_HTML: false
+      CAPTCHA_SOLVER: none
+    volumes:
+      - /srv/media/flaresolverr/config:/config:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
   ocrmypdf:
     image: jbarlow83/ocrmypdf
     container_name: ocrmypdf
