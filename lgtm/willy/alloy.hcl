@@ -139,15 +139,13 @@ loki.process "parse_proxmox_vm_logs" {
 
   // Calculate facility and severity from priority
   stage.template {
-    source = "priority"
-    template = "{{ div .Value 8 }}"
-    target_label = "facility"
+    source = "facility"
+    template = "{{ div .priority 8 }}"
   }
 
   stage.template {
-    source = "priority"
-    template = "{{ mod .Value 8 }}"
-    target_label = "severity"
+    source = "severity"
+    template = "{{ mod .priority 8 }}"
   }
 
   stage.labels {
