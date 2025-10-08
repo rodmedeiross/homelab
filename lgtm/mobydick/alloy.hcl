@@ -44,31 +44,27 @@ prometheus.scrape "mobydick_metrics" {
 prometheus.scrape "watchtower_local" {
   targets = [{
     __address__ = "watchtower:8080",
+    host = "mobydick",
+    service = "watchtower",
   }]
   forward_to = [prometheus.remote_write.default.receiver]
   scrape_interval = "30s"
   job_name = "watchtower"
   metrics_path = "/v1/metrics"
   bearer_token = sys.env("WATCHTOWER_TOKEN")
-  extra_labels = {
-    host = "mobydick",
-    service = "watchtower",
-  }
 }
 
 // Scrape Alloy self-metrics
 prometheus.scrape "alloy_self" {
   targets = [{
     __address__ = "127.0.0.1:12345",
+    host = "mobydick",
+    service = "alloy",
   }]
   forward_to = [prometheus.remote_write.default.receiver]
   scrape_interval = "15s"
   job_name = "alloy"
   metrics_path = "/metrics"
-  extra_labels = {
-    host = "mobydick",
-    service = "alloy",
-  }
 }
 
 // Send metrics to Prometheus (LGTM)
