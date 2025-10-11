@@ -144,7 +144,7 @@ services:
     environment: *common-env
     volumes:
       - /srv/media/lazylibrarian/config:/config:rw
-      - /mnt/sokolov/media/Downloads/torrents:/downloads:rw
+      - /mnt/pve/media/Downloads/torrents:/downloads:rw
       - /mnt/sokolov/media/Books/calibre:/books:rw
     networks: [media_net, proxy]
     labels:
