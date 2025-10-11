@@ -26,12 +26,6 @@ services:
       - /srv/media/qbittorrent/config:/config:rw
       - /mnt/pve/media/Downloads/torrents:/downloads:rw
     networks: [media_net, proxy]
-    healthcheck:
-      test: ["CMD-SHELL", "[ -d /mnt/pve/media ] || exit 1"]
-      interval: 30s
-      retries: 3
-      timeout: 10s
-      start_period: 30s
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
