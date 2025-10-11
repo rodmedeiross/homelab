@@ -10,7 +10,7 @@ services:
       - TZ=America/Sao_Paulo
       - PLEX_UID=1000
       - PLEX_GID=1000
-      # - PLEX_CLAIM=${PLEX_CLAIM}   # optional: plex.tv claim
+      - PLEX_CLAIM=${PLEX_CLAIM}
     deploy:
       resources:
         reservations:
