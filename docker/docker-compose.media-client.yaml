@@ -10,7 +10,7 @@ services:
       - TZ=America/Sao_Paulo
       - PLEX_UID=1000
       - PLEX_GID=1000
-      - PLEX_CLAIM=${PLEX_CLAIM}
+      # - PLEX_CLAIM=${PLEX_CLAIM}
       # - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
       # - ADVERTISE_IP=${PLEX_ADVERTISE_IP}
     deploy:
