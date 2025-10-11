@@ -2,14 +2,14 @@ name: media-client
 
 services:
   plex:
-    image: lscr.io/linuxserver/plex:latest
+    image: plexinc/pms-docker:latest
     container_name: plex
     restart: unless-stopped
     network_mode: host
     environment:
       - TZ=America/Sao_Paulo
-      - PUID=1000
-      - PGID=1000
+      - PLEX_UID=1000
+      - PLEX_GID=1000
       # - PLEX_CLAIM=${PLEX_CLAIM}   # optional: plex.tv claim
     deploy:
       resources:
@@ -20,6 +20,6 @@ services:
     volumes:
       - /srv/media/plex/config:/config:rw
       - /srv/media/plex/transcode:/transcode:rw
-      - /mnt/sokolov/media/Videos/radarr/movies:/movies:ro
-      - /mnt/sokolov/media/Videos/radarr/animes:/animes:ro
-      - /mnt/sokolov/media/Videos/sonarr/series:/series:ro
+      - /mnt/sokolov/media/Videos/radarr/movies:/data/movies:ro
+      - /mnt/sokolov/media/Videos/radarr/animes:/data/animes:ro
+      - /mnt/sokolov/media/Videos/sonarr/series:/data/series:ro
