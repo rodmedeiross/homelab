@@ -27,7 +27,7 @@ services:
       - /mnt/pve/media/Downloads/torrents:/downloads:rw
     networks: [media_net, proxy]
     healthcheck:
-      test: ["CMD-SHELL", "[ -d /mnt/sokolov/media ] || exit 1"]
+      test: ["CMD-SHELL", "[ -d /mnt/pve/media ] || exit 1"]
       interval: 30s
       retries: 3
       timeout: 10s
