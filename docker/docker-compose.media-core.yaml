@@ -24,7 +24,7 @@ services:
       - "64385:64385/udp"
     volumes:
       - /srv/media/qbittorrent/config:/config:rw
-      - /mnt/sokolov/media/Downloads/torrents:/downloads:rw
+      - /mnt/pve/media/Downloads/torrents:/downloads:rw
     networks: [media_net, proxy]
     healthcheck:
       test: ["CMD-SHELL", "[ -d /mnt/sokolov/media ] || exit 1"]
