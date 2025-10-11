@@ -22,14 +22,10 @@ services:
     ports:
       - "64385:64385"
       - "64385:64385/udp"
-      - "[::]:64385:64385"
-      - "[::]:64385:64385/udp"
     volumes:
       - /srv/media/qbittorrent/config:/config:rw
       - /mnt/sokolov/media/Downloads/torrents:/downloads:rw
     networks: [media_net, proxy]
-    sysctls:
-      - net.ipv6.conf.all.disable_ipv6=0
     healthcheck:
       test: ["CMD-SHELL", "[ -d /mnt/sokolov/media ] || exit 1"]
       interval: 30s
@@ -72,7 +68,6 @@ services:
     volumes:
       - /srv/media/sonarr/config:/config:rw
       - /mnt/sokolov/media/Videos/sonarr/series:/series:rw
-      - /mnt/sokolov/media/Videos/radarr/animes:/animes:rw
       - /mnt/sokolov/media/Downloads/torrents:/downloads:rw
     networks: [media_net, proxy]
     labels:
