@@ -25,8 +25,7 @@ services:
       - "c 226:* rmw"
     volumes:
       - /srv/media/plex/config:/config:rw
+      - /srv/media/plex/transcode:/transcode:rw
       - /mnt/sokolov/media/Videos/radarr/movies:/data/movies:ro
       - /mnt/sokolov/media/Videos/radarr/animes:/data/animes:ro
       - /mnt/sokolov/media/Videos/sonarr/series:/data/series:ro
-    tmpfs:
-      - /transcode:rw,size=8g,exec,nosuid,nodev
