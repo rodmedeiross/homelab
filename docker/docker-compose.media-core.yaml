@@ -36,6 +36,7 @@ services:
       core_macvlan:
         ipv4_address: 10.10.1.100
       media_net:
+      proxy:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 

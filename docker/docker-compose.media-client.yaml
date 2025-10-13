@@ -6,13 +6,17 @@ services:
     container_name: plex
     restart: unless-stopped
     network_mode: host
-    runtime: nvidia
     environment:
       - TZ=America/Sao_Paulo
       - PLEX_UID=1000
       - PLEX_GID=1000
-      - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu, compute, video, utility]
     devices:
       - /dev/dri:/dev/dri
       - /dev/bus/usb:/dev/bus/usb:rw
