@@ -5,6 +5,16 @@ networks:
     name: media_net
   proxy:
     external: true
+  core_macvlan:
+    name: core_macvlan
+    driver: macvlan
+    driver_opts:
+      parent: ${MACVLAN_INTERFACE:-eth0}
+    ipam:
+      config:
+        - subnet: 10.10.1.0/24
+          gateway: 10.10.1.1
+          ip_range: 10.10.1.100/32
 
 x-common-env: &common-env
   TZ: America/Sao_Paulo
@@ -19,13 +29,13 @@ services:
     environment:
       <<: *common-env
       WEBUI_PORT: 8080
-    ports:
-      - "64385:64385"
-      - "64385:64385/udp"
     volumes:
       - /srv/media/qbittorrent/config:/config:rw
       - /mnt/pve/media/Downloads/torrents:/downloads:rw
-    networks: [media_net, proxy]
+    networks:
+      core_macvlan:
+        ipv4_address: 10.10.1.100
+      media_net:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 

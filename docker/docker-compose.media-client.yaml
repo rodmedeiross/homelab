@@ -6,22 +6,23 @@ services:
     container_name: plex
     restart: unless-stopped
     network_mode: host
+    runtime: nvidia
     environment:
       - TZ=America/Sao_Paulo
       - PLEX_UID=1000
       - PLEX_GID=1000
-      # - PLEX_CLAIM=${PLEX_CLAIM}
-      # - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
-      # - ADVERTISE_IP=${PLEX_ADVERTISE_IP}
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              capabilities: ["gpu"]
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/bus/usb:/dev/bus/usb:rw
+    device_cgroup_rules:
+      - "c 189:* rmw"
+      - "c 226:* rmw"
     volumes:
       - /srv/media/plex/config:/config:rw
-      - /srv/media/plex/transcode:/transcode:rw
       - /mnt/sokolov/media/Videos/radarr/movies:/data/movies:ro
       - /mnt/sokolov/media/Videos/radarr/animes:/data/animes:ro
       - /mnt/sokolov/media/Videos/sonarr/series:/data/series:ro
+    tmpfs:
+      - /transcode:rw,size=8g,exec,nosuid,nodev
