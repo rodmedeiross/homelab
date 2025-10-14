@@ -31,7 +31,7 @@ services:
       - /mnt/sokolov/media/Videos/sonarr/series:/data/series:ro
 
   handbrake:
-    image: jlesage/handbrake:latest
+    image: zocker160/handbrake-nvenc:latest
     container_name: handbrake
     restart: unless-stopped
     environment:
