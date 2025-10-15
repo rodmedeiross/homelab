@@ -4,7 +4,7 @@ services:
   plex:
     image: plexinc/pms-docker:latest
     container_name: plex
-    restart: unless-stopped
+    restart: always
     network_mode: host
     environment:
       - TZ=America/Sao_Paulo
@@ -29,4 +29,14 @@ services:
       - /mnt/sokolov/media/Videos/radarr/movies:/data/movies:ro
       - /mnt/sokolov/media/Videos/radarr/animes:/data/animes:ro
       - /mnt/sokolov/media/Videos/sonarr/series:/data/series:ro
-
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl -f http://localhost:32400/web/index.html || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    stop_grace_period: 30s
+    stop_signal: SIGTERM
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
