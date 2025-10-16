@@ -1,15 +1,19 @@
 name: media-client
 
+x-common-env: &common-env
+  TZ: America/Sao_Paulo
+
 services:
   plex:
     image: plexinc/pms-docker:latest
     container_name: plex
-    restart: always
+    restart: unless-stopped
     network_mode: host
     environment:
-      - TZ=America/Sao_Paulo
-      - PLEX_UID=1000
-      - PLEX_GID=1000
+      <<: *common-env
+      PLEX_UID: 1000
+      PLEX_GID: 1000
+    init: true
     deploy:
       resources:
         reservations:
@@ -35,8 +39,38 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 90s
+      start_period: 120s
     stop_grace_period: 30s
     stop_signal: SIGTERM
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      <<: *common-env
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - /srv/media/tautulli/config:/config:rw
+      - "/srv/media/plex/config/Library/Application Support/Plex Media Server/Logs:/logs:ro"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS http://127.0.0.1:8181/status >/dev/null || exit 1",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    stop_grace_period: 10s
+    stop_signal: SIGTERM
+    depends_on:
+      plex:
+        condition: service_started
     labels:
       - com.centurylinklabs.watchtower.enable=true
