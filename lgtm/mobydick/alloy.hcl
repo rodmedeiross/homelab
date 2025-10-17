@@ -67,8 +67,7 @@ prometheus.scrape "alloy_self" {
   metrics_path = "/metrics"
 }
 
-// Scrape Tautulli API for active streams
-prometheus.scrape "tautulli_api" {
+loki.source.http "tautulli" {
   targets = [{
     __address__ = "10.10.1.30:8181",
     __metrics_path__ = "/api/v2",
@@ -77,14 +76,35 @@ prometheus.scrape "tautulli_api" {
     host = "mobydick",
     service = "tautulli",
   }]
-  forward_to = [prometheus.remote_write.default.receiver]
   scrape_interval = "30s"
-  scrape_timeout = "10s"
-  job_name = "tautulli"
-  params = {
-    apikey = [sys.env("TAUTULLI_API_KEY")],
-    cmd = ["get_activity"],
+  scrape_timeout  = "10s"
+
+  forward_to = [loki.process.tautulli_parse.receiver]
+}
+
+loki.process "tautulli_parse" {
+  stage.json {
+    expressions = {
+      result           = "response.result",
+      stream_count     = "response.data.stream_count",
+      total_bandwidth  = "response.data.total_bandwidth",
+      lan_bandwidth    = "response.data.lan_bandwidth",
+      wan_bandwidth    = "response.data.wan_bandwidth",
+    }
   }
+
+  stage.labels {
+    values = {
+      stream_count    = "",
+      total_bandwidth = "",
+    }
+  }
+
+  stage.output {
+    source = "response.data"
+  }
+
+  forward_to = [loki.write.default.receiver]
 }
 
 // Send metrics to Prometheus (LGTM)
