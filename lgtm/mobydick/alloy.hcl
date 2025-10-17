@@ -67,46 +67,6 @@ prometheus.scrape "alloy_self" {
   metrics_path = "/metrics"
 }
 
-loki.source.http "tautulli" {
-  targets = [{
-    __address__ = "10.10.1.30:8181",
-    __metrics_path__ = "/api/v2",
-    __param_apikey = sys.env("TAUTULLI_API_KEY"),
-    __param_cmd = "get_activity",
-    host = "mobydick",
-    service = "tautulli",
-  }]
-  scrape_interval = "30s"
-  scrape_timeout  = "10s"
-
-  forward_to = [loki.process.tautulli_parse.receiver]
-}
-
-loki.process "tautulli_parse" {
-  stage.json {
-    expressions = {
-      result           = "response.result",
-      stream_count     = "response.data.stream_count",
-      total_bandwidth  = "response.data.total_bandwidth",
-      lan_bandwidth    = "response.data.lan_bandwidth",
-      wan_bandwidth    = "response.data.wan_bandwidth",
-    }
-  }
-
-  stage.labels {
-    values = {
-      stream_count    = "",
-      total_bandwidth = "",
-    }
-  }
-
-  stage.output {
-    source = "response.data"
-  }
-
-  forward_to = [loki.write.default.receiver]
-}
-
 // Send metrics to Prometheus (LGTM)
 prometheus.remote_write "default" {
   endpoint {
