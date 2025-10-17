@@ -4,6 +4,37 @@ x-common-env: &common-env
   TZ: America/Sao_Paulo
 
 services:
+  autoheal:
+    image: willfarrell/autoheal:latest
+    container_name: autoheal
+    restart: unless-stopped
+    environment:
+      - AUTOHEAL_INTERVAL=30
+      - AUTOHEAL_START_PERIOD=120
+      - AUTOHEAL_EXITED=true
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  preflight:
+    image: alpine:latest
+    container_name: preflight
+    restart: "no"
+    command: >
+      sh -c '
+        for i in $(seq 1 120); do
+          test -e /dev/dri/renderD128 &&
+          test -d /mnt/sokolov/media/Videos/radarr/movies &&
+          test -d /mnt/sokolov/media/Videos/radarr/animes &&
+          test -d /mnt/sokolov/media/Videos/sonarr/series && exit 0;
+          echo "waiting for GPU/mounts..."; sleep 2;
+        done; exit 1'
+    volumes:
+      - /dev/dri:/dev/dri
+      - /mnt/sokolov/media:/mnt/sokolov/media:ro
+
   plex:
     image: plexinc/pms-docker:latest
     container_name: plex
@@ -35,15 +66,19 @@ services:
       - /mnt/sokolov/media/Videos/sonarr/series:/data/series:ro
     healthcheck:
       test:
-        ["CMD-SHELL", "curl -f http://localhost:32400/web/index.html || exit 1"]
+        ["CMD-SHELL", "curl -fsS http://127.0.0.1:32400/identity > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 5
+      retries: 10
       start_period: 120s
     stop_grace_period: 30s
     stop_signal: SIGTERM
     labels:
       - com.centurylinklabs.watchtower.enable=true
+      - autoheal=true
+    depends_on:
+      preflight:
+        condition: service_completed_successfully
 
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
@@ -61,7 +96,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -fsS http://localhost:8181/status >/dev/null || exit 1",
+          "curl -fsS http://127.0.0.1:8181/status >/dev/null || exit 1",
         ]
       interval: 30s
       timeout: 5s
@@ -71,6 +106,6 @@ services:
     stop_signal: SIGTERM
     depends_on:
       plex:
-        condition: service_started
+        condition: service_healthy
     labels:
       - com.centurylinklabs.watchtower.enable=true
