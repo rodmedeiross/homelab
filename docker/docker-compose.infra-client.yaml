@@ -70,5 +70,6 @@ services:
     environment:
       - TZ=America/Sao_Paulo
       - WATCHTOWER_TOKEN=${WATCHTOWER_TOKEN:-watchtower-secret}
+      - TAUTULLI_API_KEY=${TAUTULLI_API_KEY}
     labels:
       - com.centurylinklabs.watchtower.enable=true

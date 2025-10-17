@@ -67,6 +67,26 @@ prometheus.scrape "alloy_self" {
   metrics_path = "/metrics"
 }
 
+// Scrape Tautulli API for active streams
+prometheus.scrape "tautulli_api" {
+  targets = [{
+    __address__ = "10.10.1.30:8181",
+    __metrics_path__ = "/api/v2",
+    __param_apikey = sys.env("TAUTULLI_API_KEY"),
+    __param_cmd = "get_activity",
+    host = "mobydick",
+    service = "tautulli",
+  }]
+  forward_to = [prometheus.remote_write.default.receiver]
+  scrape_interval = "30s"
+  scrape_timeout = "10s"
+  job_name = "tautulli"
+  params = {
+    apikey = [sys.env("TAUTULLI_API_KEY")],
+    cmd = ["get_activity"],
+  }
+}
+
 // Send metrics to Prometheus (LGTM)
 prometheus.remote_write "default" {
   endpoint {
