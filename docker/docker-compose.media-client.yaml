@@ -21,7 +21,6 @@ services:
     volumes:
       - /srv/media/plex/config:/config:rw
       - /srv/media/plex/transcode:/transcode:rw
-      - /srv/media/plex/tmp:/tmp:rw
       - /mnt/sokolov/media/Videos/radarr/movies:/data/movies:ro
       - /mnt/sokolov/media/Videos/radarr/animes:/data/animes:ro
       - /mnt/sokolov/media/Videos/sonarr/series:/data/series:ro
