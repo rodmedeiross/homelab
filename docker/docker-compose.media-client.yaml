@@ -19,8 +19,6 @@ services:
       TMPDIR: /transcode
       TMP: /transcode
       TEMP: /transcode
-      LD_LIBRARY_PATH: /usr/lib/x86_64-linux-gnu:/usr/local/nvidia/lib64:/usr/local/nvidia/lib
-      LIBVA_DRIVER_NAME: nvidia
     gpus: all
     runtime: nvidia
     volumes:
