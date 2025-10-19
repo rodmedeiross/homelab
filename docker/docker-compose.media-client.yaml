@@ -15,9 +15,8 @@ services:
       PLEX_UID: 1000
       PLEX_GID: 1000
       NVIDIA_VISIBLE_DEVICES: all
-      NVIDIA_DRIVER_CAPABILITIES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,video,utility
     gpus: all
-    runtime: nvidia
     volumes:
       - /srv/media/plex/config:/config:rw
       - /srv/media/plex/transcode:/transcode:rw
@@ -26,14 +25,6 @@ services:
       - /mnt/sokolov/media/Videos/sonarr/series:/data/series:ro
     devices:
       - /dev/bus/usb:/dev/bus/usb:rw
-      - /dev/nvidia-caps:/dev/nvidia-caps
-    group_add:
-      - "video"
-      - "render"
-    device_cgroup_rules:
-      - "c 195:* rmw"
-      - "c 238:* rmw"
-      - "c 239:* rmw"
     healthcheck:
       test:
         [
