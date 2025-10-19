@@ -27,6 +27,13 @@ services:
     devices:
       - /dev/bus/usb:/dev/bus/usb:rw
       - /dev/nvidia-caps:/dev/nvidia-caps
+    group_add:
+      - "video"
+      - "render"
+    device_cgroup_rules:
+      - "c 195:* rmw"
+      - "c 238:* rmw"
+      - "c 239:* rmw"
     healthcheck:
       test:
         [
