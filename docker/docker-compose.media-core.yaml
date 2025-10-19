@@ -117,44 +117,6 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  kavita:
-    image: kizaing/kavita:latest
-    container_name: kavita
-    restart: unless-stopped
-    volumes:
-      - /mnt/sokolov/media/Books:/data/books:ro
-      - /srv/media/kavita/config:/kavita/config:rw
-    networks: [media_net, proxy]
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-
-  calibre-web:
-    image: lscr.io/linuxserver/calibre-web:latest
-    container_name: calibre-web
-    restart: unless-stopped
-    environment:
-      <<: *common-env
-      DOCKER_MODS: linuxserver/mods:universal-calibre
-    volumes:
-      - /srv/media/calibre-web/config:/config:rw
-      - /mnt/sokolov/media/Books/calibre:/books:rw
-    networks: [media_net, proxy]
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-
-  lazylibrarian:
-    image: lscr.io/linuxserver/lazylibrarian:latest
-    container_name: lazylibrarian
-    restart: unless-stopped
-    environment: *common-env
-    volumes:
-      - /srv/media/lazylibrarian/config:/config:rw
-      - /mnt/pve/media/Downloads/torrents:/downloads:rw
-      - /mnt/sokolov/media/Books/calibre:/books:rw
-    networks: [media_net, proxy]
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
     container_name: flaresolverr
@@ -170,25 +132,39 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  ocrmypdf:
-    image: jbarlow83/ocrmypdf
-    container_name: ocrmypdf
+  profilarr:
+    image: santiagosayshey/profilarr:latest
+    container_name: profilarr
     restart: unless-stopped
-    command:
-      [
-        "--watch",
-        "/input",
-        "/output",
-        "--output-type",
-        "pdfa",
-        "--optimize",
-        "3",
-        "--language",
-        "eng",
-      ]
+    environment:
+      <<: *common-env
     volumes:
-      - /mnt/sokolov/media/Books/inbox/raw:/input:rw
-      - /mnt/sokolov/media/Books/inbox/processed:/output:rw
-    networks: [media_net]
+      - /srv/media/profilarr/config:/config:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  huntarr:
+    image: huntarr/huntarr:latest
+    container_name: huntarr
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+    volumes:
+      - /srv/media/huntarr:/config:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  cleanuparr:
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    container_name: cleanuparr
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      PORT: 11011
+    volumes:
+      - /srv/media/cleanuparr/config:/config:rw
+    networks: [media_net, proxy]
     labels:
       - com.centurylinklabs.watchtower.enable=true

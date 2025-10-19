@@ -1,0 +1,74 @@
+name: media-reader
+
+networks:
+  media_net:
+    name: media_net
+  proxy:
+    external: true
+
+x-common-env: &common-env
+  TZ: America/Sao_Paulo
+  PUID: 1500
+  PGID: 1500
+
+services:
+  kavita:
+    image: kizaing/kavita:latest
+    container_name: kavita
+    restart: unless-stopped
+    volumes:
+      - /mnt/sokolov/media/Books:/data/books:ro
+      - /srv/media/kavita/config:/kavita/config:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre-web
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      DOCKER_MODS: linuxserver/mods:universal-calibre
+    volumes:
+      - /srv/media/calibre-web/config:/config:rw
+      - /mnt/sokolov/media/Books/calibre:/books:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    container_name: lazylibrarian
+    restart: unless-stopped
+    environment: *common-env
+    volumes:
+      - /srv/media/lazylibrarian/config:/config:rw
+      - /mnt/pve/media/Downloads/torrents:/downloads:rw
+      - /mnt/sokolov/media/Books/calibre:/books:rw
+    networks: [media_net, proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  ocrmypdf:
+    image: jbarlow83/ocrmypdf
+    container_name: ocrmypdf
+    restart: unless-stopped
+    command:
+      [
+        "--watch",
+        "/input",
+        "/output",
+        "--output-type",
+        "pdfa",
+        "--optimize",
+        "3",
+        "--language",
+        "eng",
+      ]
+    volumes:
+      - /mnt/sokolov/media/Books/inbox/raw:/input:rw
+      - /mnt/sokolov/media/Books/inbox/processed:/output:rw
+    networks: [media_net]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
