@@ -3,8 +3,6 @@ name: games
 networks:
   games_net:
     name: games_net
-  proxy:
-    external: true
 
 volumes:
   romm_mysql_data:
@@ -45,7 +43,9 @@ services:
       - /mnt/sokolov/media/Games/roms:/romm/library:rw
       - /srv/games/romm/assets:/romm/assets:rw
       - /srv/games/romm/config:/romm/config:rw
-    networks: [games_net, proxy]
+    ports:
+      - 8383:8080
+    networks: [games_net]
     depends_on:
       romm-db:
         condition: service_healthy
