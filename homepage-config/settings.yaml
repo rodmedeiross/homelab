@@ -1,0 +1,82 @@
+# Homepage settings
+---
+title: Homelab Dashboard
+favicon: https://gethomepage.dev/img/favicon.ico
+
+# Set the background image or color
+background:
+  image: /images/background.png
+  blur: sm # sm, md, lg, xl... see https://tailwindcss.com/docs/backdrop-blur
+  saturate: 50 # 0, 50, 100... see https://tailwindcss.com/docs/backdrop-saturate
+  brightness: 50 # 0, 50, 75, 90, 100... see https://tailwindcss.com/docs/backdrop-brightness
+  opacity: 50 # 0-100
+
+# Set the site theme
+theme: dark # or light
+
+# The color palette - options: white, gray, slate, zinc, neutral, stone, red, orange, amber, yellow, lime, green, emerald, teal, cyan, sky, blue, indigo, violet, purple, fuchsia, pink, rose
+color: slate
+
+# Page layout - options: 3 columns, 2 columns, or 1 column
+layout:
+  Media:
+    style: row
+    columns: 3
+  Media Management:
+    style: row
+    columns: 4
+  Downloads:
+    style: row
+    columns: 3
+  Books & Comics:
+    style: row
+    columns: 3
+  Infrastructure:
+    style: row
+    columns: 4
+  Monitoring:
+    style: row
+    columns: 2
+  AI & Automation:
+    style: row
+    columns: 2
+  Games:
+    style: row
+    columns: 2
+
+# Whether to show the search bar
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: false
+  showSearchSuggestions: true
+  hideVisitURL: false
+
+# Show docker stats by default
+showStats: true
+
+# Set the language
+language: pt-BR
+
+# Set the date format
+dateFormat: DD/MM/YYYY
+
+# Set the time format
+timeFormat: 24hour
+
+# Header style
+headerStyle: boxed # or underlined, clean
+
+# Favicon
+favicon: https://gethomepage.dev/img/favicon.ico
+
+# Hide errors
+hideErrors: false
+
+# Show docker stats
+statusStyle: dot # or basic
+
+# Providers
+providers:
+  openweathermap: openweathermapapikey
+  weatherapi: weatherapiapikey
+

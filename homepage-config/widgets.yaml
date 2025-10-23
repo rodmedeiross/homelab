@@ -1,0 +1,45 @@
+# Information widgets for the homepage
+---
+- logo:
+    icon: https://gethomepage.dev/img/banner_light@2x.png
+
+- greeting:
+    text_size: xl
+    text: 'Outerheaven!'
+
+- datetime:
+    text_size: xl
+    format:
+      dateStyle: long
+      timeStyle: short
+      hour12: false
+
+- search:
+    provider: google
+    target: _blank
+
+# System resources widget
+- resources:
+    cpu: true
+    memory: true
+    disk: /
+    cputemp: true
+    uptime: true
+    units: metric
+    refresh: 3000
+    diskUnits: bytes
+# Optional: Add weather widget (requires API key)
+# - openweathermap:
+#     label: São Paulo
+#     latitude: -23.5505
+#     longitude: -46.6333
+#     units: metric
+#     apiKey: {{OPENWEATHERMAP_API_KEY}}
+#     cache: 5
+
+# Optional: Add custom disk usage widgets for your mounts
+# - resources:
+#     label: Sokolov Storage
+#     disk: /mnt/sokolov
+#     diskUnits: bytes
+

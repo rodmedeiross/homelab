@@ -1,0 +1,198 @@
+# Services configuration
+---
+- Media:
+    - Plex:
+        icon: plex.png
+        href: http://{{HOMEPAGE_VAR_PLEX_HOST}}:32400/web
+        description: Media Server
+        server: mobydick
+        container: plex
+        widget:
+          type: plex
+          url: http://{{HOMEPAGE_VAR_PLEX_HOST}}:32400
+          key: { { HOMEPAGE_VAR_PLEX_API_KEY } }
+
+    - Tautulli:
+        icon: tautulli.png
+        href: http://{{HOMEPAGE_VAR_TAUTULLI_HOST}}:8181
+        description: Plex Statistics
+        server: mobydick
+        container: tautulli
+        widget:
+          type: tautulli
+          url: http://{{HOMEPAGE_VAR_TAUTULLI_HOST}}:8181
+          key: { { HOMEPAGE_VAR_TAUTULLI_API_KEY } }
+
+- Media Management:
+    - Radarr:
+        icon: radarr.png
+        href: http://radarr:7878
+        description: Movies Management
+        server: willy
+        container: radarr
+        widget:
+          type: radarr
+          url: http://radarr:7878
+          key: { { HOMEPAGE_VAR_RADARR_API_KEY } }
+
+    - Sonarr:
+        icon: sonarr.png
+        href: http://sonarr:8989
+        description: Series Management
+        server: willy
+        container: sonarr
+        widget:
+          type: sonarr
+          url: http://sonarr:8989
+          key: { { HOMEPAGE_VAR_SONARR_API_KEY } }
+
+    - Prowlarr:
+        icon: prowlarr.png
+        href: http://prowlarr:9696
+        description: Indexer Manager
+        server: willy
+        container: prowlarr
+        widget:
+          type: prowlarr
+          url: http://prowlarr:9696
+          key: { { HOMEPAGE_VAR_PROWLARR_API_KEY } }
+
+    - Bazarr:
+        icon: bazarr.png
+        href: http://bazarr:6767
+        description: Subtitles Management
+        server: willy
+        container: bazarr
+        widget:
+          type: bazarr
+          url: http://bazarr:6767
+          key: { { HOMEPAGE_VAR_BAZARR_API_KEY } }
+
+    - Overseerr:
+        icon: overseerr.png
+        href: http://overseerr:5055
+        description: Media Requests
+        server: willy
+        container: overseerr
+        widget:
+          type: overseerr
+          url: http://overseerr:5055
+          key: { { HOMEPAGE_VAR_OVERSEERR_API_KEY } }
+
+    - Huntarr:
+        icon: huntarr.png
+        href: http://huntarr:8080
+        description: Stalled Downloads Manager
+        server: willy
+        container: huntarr
+
+    - Cleanuparr:
+        icon: cleanuparr.png
+        href: http://cleanuparr:5000
+        description: Media Cleanup Automation
+        server: willy
+        container: cleanuparr
+
+    - Profilarr:
+        icon: profilarr.png
+        href: http://profilarr:5000
+        description: Quality Profile Manager
+        server: willy
+        container: profilarr
+
+- Downloads:
+    - qBittorrent:
+        icon: qbittorrent.png
+        href: http://qbittorrent:8080
+        description: Torrent Client
+        server: willy
+        container: qbittorrent
+        widget:
+          type: qbittorrent
+          url: http://qbittorrent:8080
+          username: { { HOMEPAGE_VAR_QBITTORRENT_USERNAME } }
+          password: { { HOMEPAGE_VAR_QBITTORRENT_PASSWORD } }
+
+    - Jackett:
+        icon: jackett.png
+        href: http://jackett:9117
+        description: Indexer Proxy
+        server: willy
+        container: jackett
+        widget:
+          type: jackett
+          url: http://jackett:9117
+          key: { { HOMEPAGE_VAR_JACKETT_API_KEY } }
+
+- Infrastructure:
+    - Nginx Proxy Manager:
+        icon: nginx-proxy-manager.png
+        href: http://npm:81
+        description: Reverse Proxy
+        server: willy
+        container: npm
+        widget:
+          type: npm
+          url: http://npm:81
+          username: { { HOMEPAGE_VAR_NPM_USERNAME } }
+          password: { { HOMEPAGE_VAR_NPM_PASSWORD } }
+
+    - Portainer:
+        icon: portainer.png
+        href: http://portainer:9000
+        description: Container Management
+        server: willy
+        container: portainer
+        widget:
+          type: portainer
+          url: http://portainer:9000
+          env: 1
+          key: { { HOMEPAGE_VAR_PORTAINER_API_KEY } }
+
+    - Watchtower Willy:
+        icon: watchtower.png
+        href: http://watchtower:8080
+        description: Auto Container Updates
+        server: willy
+        container: watchtower
+        widget:
+          type: watchtower
+          url: http://watchtower:8080
+          key: { { HOMEPAGE_VAR_WATCHTOWER_TOKEN } }
+
+    - Watchtower Mobydick:
+        icon: watchtower.png
+        href: http://{{HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_HOST}}:8080
+        description: Auto Container Updates
+        server: mobydick
+        container: watchtower
+        widget:
+          type: watchtower
+          url: http://{{HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_HOST}}:8080
+          key: { { HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_TOKEN } }
+
+- Monitoring:
+    - Grafana:
+        icon: grafana.png
+        href: http://lgtm:3000
+        description: Metrics & Logs
+        server: willy
+        container: lgtm
+        widget:
+          type: grafana
+          url: http://lgtm:3000
+          username: { { HOMEPAGE_VAR_GRAFANA_USER } }
+          password: { { HOMEPAGE_VAR_GRAFANA_PASS } }
+
+- Games:
+    - RomM:
+        icon: romm.png
+        href: http://{{HOMEPAGE_VAR_ROMM_HOST}}:8080
+        description: ROM Manager
+        server: mobydick
+        container: romm
+        widget:
+          type: romm
+          url: http://{{HOMEPAGE_VAR_ROMM_HOST}}:8080
+          username: { { HOMEPAGE_VAR_ROMM_USERNAME } }
+          password: { { HOMEPAGE_VAR_ROMM_PASSWORD } }
