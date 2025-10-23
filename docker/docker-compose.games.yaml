@@ -19,6 +19,7 @@ services:
     image: rommapp/romm:latest
     container_name: romm
     restart: unless-stopped
+    user: "1500:1500"
     environment:
       <<: *common-env
       DB_HOST: romm-db
