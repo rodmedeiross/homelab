@@ -29,7 +29,7 @@ services:
       - TZ=America/Sao_Paulo
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
-      - WATCHTOWER_SCHEDULE=0 0 5 * * *
+      - WATCHTOWER_SCHEDULE=0 0 8 * * *
       - WATCHTOWER_HTTP_API_METRICS=true
       - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_TOKEN:-watchtower-secret}
       - WATCHTOWER_NOTIFICATIONS=email
