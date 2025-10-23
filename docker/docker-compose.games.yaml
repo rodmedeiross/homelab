@@ -11,15 +11,12 @@ volumes:
 
 x-common-env: &common-env
   TZ: America/Sao_Paulo
-  PUID: 1500
-  PGID: 1500
 
 services:
   romm:
     image: rommapp/romm:latest
     container_name: romm
     restart: unless-stopped
-    user: "1500:1500"
     environment:
       <<: *common-env
       DB_HOST: romm-db
