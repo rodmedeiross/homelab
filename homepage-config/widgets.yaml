@@ -1,4 +1,3 @@
-# Information widgets for the homepage
 ---
 - logo:
     icon: https://gethomepage.dev/img/banner_light@2x.png
@@ -18,7 +17,6 @@
     provider: google
     target: _blank
 
-# System resources widget
 - resources:
     cpu: true
     memory: true
@@ -28,18 +26,21 @@
     units: metric
     refresh: 3000
     diskUnits: bytes
-# Optional: Add weather widget (requires API key)
-# - openweathermap:
-#     label: São Paulo
-#     latitude: -23.5505
-#     longitude: -46.6333
-#     units: metric
-#     apiKey: {{OPENWEATHERMAP_API_KEY}}
-#     cache: 5
 
-# Optional: Add custom disk usage widgets for your mounts
-# - resources:
-#     label: Sokolov Storage
-#     disk: /mnt/sokolov
-#     diskUnits: bytes
+- openweathermap:
+    label: São Paulo
+    latitude: -23.5505
+    longitude: -46.6333
+    units: metric
+    apiKey: { { OPENWEATHERMAP_API_KEY } }
+    cache: 5
 
+- resources:
+    label: Sokolov Storage
+    disk: /mnt/sokolov
+    diskUnits: bytes
+
+- resources:
+    label: PVE Storage
+    disk: /mnt/pve
+    diskUnits: bytes

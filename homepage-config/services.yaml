@@ -1,4 +1,3 @@
-# Services configuration
 ---
 - Media:
     - Plex:
@@ -125,6 +124,14 @@
           key: { { HOMEPAGE_VAR_JACKETT_API_KEY } }
 
 - Infrastructure:
+    - Proxmox:
+        icon: proxmox.png
+        href: https://{{HOMEPAGE_VAR_PVE_HOST}}:8006
+        description: Virtualization Platform
+        widget:
+          type: proxmox
+          url: https://{{HOMEPAGE_VAR_PVE_HOST}}:8006
+
     - Nginx Proxy Manager:
         icon: nginx-proxy-manager.png
         href: http://npm:81
@@ -170,6 +177,38 @@
           type: watchtower
           url: http://{{HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_HOST}}:8080
           key: { { HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_TOKEN } }
+
+- Networking:
+    - Pi-Hole:
+        icon: pihole.png
+        href: http://{ { HOMEPAGE_VAR_PIHOLE_HOST } }
+        description: DNS & Ad Blocking
+        proxmoxNode: { { HOMEPAGE_VAR_PVE_NODE } }
+        proxmoxVMID: { { HOMEPAGE_VAR_PIHOLE_VMID } }
+        proxmoxType: lxc
+
+    - pfsense:
+        icon: pfsense.png
+        href: http://{ { HOMEPAGE_VAR_PFSENSE_HOST } }
+        description: Firewall & Router
+        proxmoxNode: { { HOMEPAGE_VAR_PVE_NODE } }
+        proxmoxVMID: { { HOMEPAGE_VAR_PFSENSE_VMID } }
+
+- Data:
+    - Proxmox Backup Server:
+        icon: proxmox-backup.png
+        href: http://pbs:8009
+        description: Backup Server
+        proxmoxNode: { { HOMEPAGE_VAR_PVE_NODE } }
+        proxmoxVMID: { { HOMEPAGE_VAR_PBS_VMID } }
+        proxmoxType: lxc
+
+    - TrueNAS:
+        icon: truenas.png
+        href: http://{ { HOMEPAGE_VAR_TRUENAS_HOST } }
+        description: NAS
+        proxmoxNode: { { HOMEPAGE_VAR_PVE_NODE } }
+        proxmoxVMID: { { HOMEPAGE_VAR_TRUENAS_VMID } }
 
 - Monitoring:
     - Grafana:

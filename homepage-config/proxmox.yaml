@@ -1,0 +1,4 @@
+pve:
+  url: { { HOMEPAGE_VAR_PVE_URL } }
+  token: { { HOMEPAGE_VAR_PVE_TOKEN } }
+  secret: { { HOMEPAGE_VAR_PVE_TOKEN_SECRET } }

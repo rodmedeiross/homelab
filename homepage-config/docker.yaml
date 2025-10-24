@@ -1,6 +1,3 @@
-# Docker configuration for Homepage
-# This tells Homepage how to connect to Docker for service discovery
-
 willy:
   host: dockerproxy
   port: 2375
