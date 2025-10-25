@@ -3,5 +3,5 @@ willy:
   port: 2375
 
 mobydick:
-  host: { { HOMEPAGE_VAR_MOBYDICK_HOST } }
+  host: {{HOMEPAGE_VAR_MOBYDICK_HOST}}
   port: 2375

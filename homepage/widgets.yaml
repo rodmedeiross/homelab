@@ -32,7 +32,7 @@
     latitude: -23.5505
     longitude: -46.6333
     units: metric
-    apiKey: { { OPENWEATHERMAP_API_KEY } }
+    apiKey: {{OPENWEATHERMAP_API_KEY}}
     cache: 5
 
 - resources:

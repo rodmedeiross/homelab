@@ -9,7 +9,7 @@
         widget:
           type: plex
           url: http://{{HOMEPAGE_VAR_PLEX_HOST}}:32400
-          key: { { HOMEPAGE_VAR_PLEX_API_KEY } }
+          key: {{HOMEPAGE_VAR_PLEX_API_KEY}}
 
     - Tautulli:
         icon: tautulli.png
@@ -20,7 +20,7 @@
         widget:
           type: tautulli
           url: http://{{HOMEPAGE_VAR_TAUTULLI_HOST}}:8181
-          key: { { HOMEPAGE_VAR_TAUTULLI_API_KEY } }
+          key: {{HOMEPAGE_VAR_TAUTULLI_API_KEY}}
 
 - Media Management:
     - Radarr:
@@ -32,7 +32,7 @@
         widget:
           type: radarr
           url: http://radarr:7878
-          key: { { HOMEPAGE_VAR_RADARR_API_KEY } }
+          key: {{HOMEPAGE_VAR_RADARR_API_KEY}}
 
     - Sonarr:
         icon: sonarr.png
@@ -43,7 +43,7 @@
         widget:
           type: sonarr
           url: http://sonarr:8989
-          key: { { HOMEPAGE_VAR_SONARR_API_KEY } }
+          key: {{HOMEPAGE_VAR_SONARR_API_KEY}}
 
     - Prowlarr:
         icon: prowlarr.png
@@ -54,7 +54,7 @@
         widget:
           type: prowlarr
           url: http://prowlarr:9696
-          key: { { HOMEPAGE_VAR_PROWLARR_API_KEY } }
+          key: {{HOMEPAGE_VAR_PROWLARR_API_KEY}}
 
     - Bazarr:
         icon: bazarr.png
@@ -65,7 +65,7 @@
         widget:
           type: bazarr
           url: http://bazarr:6767
-          key: { { HOMEPAGE_VAR_BAZARR_API_KEY } }
+          key: {{HOMEPAGE_VAR_BAZARR_API_KEY}}
 
     - Overseerr:
         icon: overseerr.png
@@ -76,7 +76,7 @@
         widget:
           type: overseerr
           url: http://overseerr:5055
-          key: { { HOMEPAGE_VAR_OVERSEERR_API_KEY } }
+          key: {{HOMEPAGE_VAR_OVERSEERR_API_KEY}}
 
     - Huntarr:
         icon: huntarr.png
@@ -109,8 +109,8 @@
         widget:
           type: qbittorrent
           url: http://qbittorrent:8080
-          username: { { HOMEPAGE_VAR_QBITTORRENT_USERNAME } }
-          password: { { HOMEPAGE_VAR_QBITTORRENT_PASSWORD } }
+          username: {{HOMEPAGE_VAR_QBITTORRENT_USERNAME}}
+          password: {{HOMEPAGE_VAR_QBITTORRENT_PASSWORD}}
 
     - Jackett:
         icon: jackett.png
@@ -121,7 +121,7 @@
         widget:
           type: jackett
           url: http://jackett:9117
-          key: { { HOMEPAGE_VAR_JACKETT_API_KEY } }
+          key: {{HOMEPAGE_VAR_JACKETT_API_KEY}}
 
 - Infrastructure:
     - Proxmox:
@@ -141,8 +141,8 @@
         widget:
           type: npm
           url: http://npm:81
-          username: { { HOMEPAGE_VAR_NPM_USERNAME } }
-          password: { { HOMEPAGE_VAR_NPM_PASSWORD } }
+          username: {{HOMEPAGE_VAR_NPM_USERNAME}}
+          password: {{HOMEPAGE_VAR_NPM_PASSWORD}}
 
     - Portainer:
         icon: portainer.png
@@ -154,7 +154,7 @@
           type: portainer
           url: http://portainer:9000
           env: 1
-          key: { { HOMEPAGE_VAR_PORTAINER_API_KEY } }
+          key: {{HOMEPAGE_VAR_PORTAINER_API_KEY}}
 
     - Watchtower Willy:
         icon: watchtower.png
@@ -165,7 +165,7 @@
         widget:
           type: watchtower
           url: http://watchtower:8080
-          key: { { HOMEPAGE_VAR_WATCHTOWER_TOKEN } }
+          key: {{HOMEPAGE_VAR_WATCHTOWER_TOKEN}}
 
     - Watchtower Mobydick:
         icon: watchtower.png
@@ -176,39 +176,39 @@
         widget:
           type: watchtower
           url: http://{{HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_HOST}}:8080
-          key: { { HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_TOKEN } }
+          key: {{HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_TOKEN}}
 
 - Networking:
     - Pi-Hole:
         icon: pihole.png
-        href: http://{ { HOMEPAGE_VAR_PIHOLE_HOST } }
+        href: http://{{HOMEPAGE_VAR_PIHOLE_HOST}}
         description: DNS & Ad Blocking
-        proxmoxNode: { { HOMEPAGE_VAR_PVE_NODE } }
-        proxmoxVMID: { { HOMEPAGE_VAR_PIHOLE_VMID } }
+        proxmoxNode: {{HOMEPAGE_VAR_PVE_NODE}}
+        proxmoxVMID: {{HOMEPAGE_VAR_PIHOLE_VMID}}
         proxmoxType: lxc
 
     - pfsense:
         icon: pfsense.png
-        href: http://{ { HOMEPAGE_VAR_PFSENSE_HOST } }
+        href: http://{{HOMEPAGE_VAR_PFSENSE_HOST}}
         description: Firewall & Router
-        proxmoxNode: { { HOMEPAGE_VAR_PVE_NODE } }
-        proxmoxVMID: { { HOMEPAGE_VAR_PFSENSE_VMID } }
+        proxmoxNode: {{HOMEPAGE_VAR_PVE_NODE}}
+        proxmoxVMID: {{HOMEPAGE_VAR_PFSENSE_VMID}}
 
 - Data:
     - Proxmox Backup Server:
         icon: proxmox-backup.png
         href: http://pbs:8009
         description: Backup Server
-        proxmoxNode: { { HOMEPAGE_VAR_PVE_NODE } }
-        proxmoxVMID: { { HOMEPAGE_VAR_PBS_VMID } }
+        proxmoxNode: {{HOMEPAGE_VAR_PVE_NODE}}
+        proxmoxVMID: {{HOMEPAGE_VAR_PBS_VMID}}
         proxmoxType: lxc
 
     - TrueNAS:
         icon: truenas.png
-        href: http://{ { HOMEPAGE_VAR_TRUENAS_HOST } }
+        href: http://{{HOMEPAGE_VAR_TRUENAS_HOST}}
         description: NAS
-        proxmoxNode: { { HOMEPAGE_VAR_PVE_NODE } }
-        proxmoxVMID: { { HOMEPAGE_VAR_TRUENAS_VMID } }
+        proxmoxNode: {{HOMEPAGE_VAR_PVE_NODE}}
+        proxmoxVMID: {{HOMEPAGE_VAR_TRUENAS_VMID}}
 
 - Monitoring:
     - Grafana:
@@ -220,8 +220,8 @@
         widget:
           type: grafana
           url: http://lgtm:3000
-          username: { { HOMEPAGE_VAR_GRAFANA_USER } }
-          password: { { HOMEPAGE_VAR_GRAFANA_PASS } }
+          username: {{HOMEPAGE_VAR_GRAFANA_USER}}
+          password: {{HOMEPAGE_VAR_GRAFANA_PASS}}
 
 - Games:
     - RomM:
@@ -233,5 +233,5 @@
         widget:
           type: romm
           url: http://{{HOMEPAGE_VAR_ROMM_HOST}}:8080
-          username: { { HOMEPAGE_VAR_ROMM_USERNAME } }
-          password: { { HOMEPAGE_VAR_ROMM_PASSWORD } }
+          username: {{HOMEPAGE_VAR_ROMM_USERNAME}}
+          password: {{HOMEPAGE_VAR_ROMM_PASSWORD}}
