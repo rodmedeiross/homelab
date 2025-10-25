@@ -1,6 +1,22 @@
 name: infra-client
 
 services:
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    restart: unless-stopped
+    ports:
+      - "10.10.1.30:2375:2375"
+    environment:
+      - CONTAINERS=1
+      - SERVICES=1
+      - TASKS=1
+      - POST=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
   portainer-agent:
     image: portainer/agent:latest
     container_name: portainer-agent
@@ -39,6 +55,8 @@ services:
       - WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT=25
       - WATCHTOWER_NOTIFICATION_EMAIL_DELAY=2
       - WATCHTOWER_NOTIFICATION_EMAIL_SUBJECTTAG=[Mobydick]
+    ports:
+      - "10.10.1.30:8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     logging:

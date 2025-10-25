@@ -1,0 +1,94 @@
+name: homepage
+
+networks:
+  proxy:
+    external: true
+
+services:
+  dockerproxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:latest
+    container_name: dockerproxy
+    restart: unless-stopped
+    environment:
+      - CONTAINERS=1
+      - SERVICES=1
+      - TASKS=1
+      - POST=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - proxy
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    environment:
+      - TZ=America/Sao_Paulo
+      - PUID=1000
+      - PGID=1000
+      - HOMEPAGE_VAR_MOBYDICK_HOST=${MOBYDICK_HOST}
+      - HOMEPAGE_VAR_PLEX_URL=${PLEX_URL}
+      - HOMEPAGE_VAR_PLEX_API_KEY=${PLEX_API_KEY}
+      - HOMEPAGE_VAR_TAUTULLI_URL=${TAUTULLI_URL}
+      - HOMEPAGE_VAR_TAUTULLI_API_KEY=${TAUTULLI_API_KEY}
+      - HOMEPAGE_VAR_RADARR_URL=${RADARR_URL}
+      - HOMEPAGE_VAR_RADARR_API_KEY=${RADARR_API_KEY}
+      - HOMEPAGE_VAR_SONARR_URL=${SONARR_URL}
+      - HOMEPAGE_VAR_SONARR_API_KEY=${SONARR_API_KEY}
+      - HOMEPAGE_VAR_PROWLARR_URL=${PROWLARR_URL}
+      - HOMEPAGE_VAR_PROWLARR_API_KEY=${PROWLARR_API_KEY}
+      - HOMEPAGE_VAR_BAZARR_URL=${BAZARR_URL}
+      - HOMEPAGE_VAR_BAZARR_API_KEY=${BAZARR_API_KEY}
+      - HOMEPAGE_VAR_OVERSEERR_URL=${OVERSEERR_URL}
+      - HOMEPAGE_VAR_OVERSEERR_API_KEY=${OVERSEERR_API_KEY}
+      - HOMEPAGE_VAR_HUNTARR_URL=${HUNTARR_URL}
+      - HOMEPAGE_VAR_CLEANUPARR_URL=${CLEANUPARR_URL}
+      - HOMEPAGE_VAR_PROFILARR_URL=${PROFILARR_URL}
+      - HOMEPAGE_VAR_QBITTORRENT_URL=${QBITTORRENT_URL}
+      - HOMEPAGE_VAR_QBITTORRENT_USERNAME=${QBITTORRENT_USERNAME}
+      - HOMEPAGE_VAR_QBITTORRENT_PASSWORD=${QBITTORRENT_PASSWORD}
+      - HOMEPAGE_VAR_JACKETT_URL=${JACKETT_URL}
+      - HOMEPAGE_VAR_JACKETT_API_KEY=${JACKETT_API_KEY}
+      - HOMEPAGE_VAR_NPM_URL=${NPM_URL}
+      - HOMEPAGE_VAR_NPM_USERNAME=${NPM_USERNAME}
+      - HOMEPAGE_VAR_NPM_PASSWORD=${NPM_PASSWORD}
+      - HOMEPAGE_VAR_PORTAINER_URL=${PORTAINER_URL}
+      - HOMEPAGE_VAR_PORTAINER_API_KEY=${PORTAINER_API_KEY}
+      - HOMEPAGE_VAR_WATCHTOWER_WILLY_URL=${WATCHTOWER_WILLY_URL}
+      - HOMEPAGE_VAR_WATCHTOWER_WILLY_TOKEN=${WATCHTOWER_WILLY_TOKEN}
+      - HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_URL=${WATCHTOWER_MOBYDICK_URL}
+      - HOMEPAGE_VAR_WATCHTOWER_MOBYDICK_TOKEN=${WATCHTOWER_MOBYDICK_TOKEN}
+      - HOMEPAGE_VAR_GRAFANA_URL=${GRAFANA_URL}
+      - HOMEPAGE_VAR_GRAFANA_USER=${GRAFANA_USER}
+      - HOMEPAGE_VAR_GRAFANA_PASS=${GRAFANA_PASS}
+      - HOMEPAGE_VAR_ROMM_URL=${ROMM_URL}
+      - HOMEPAGE_VAR_ROMM_USERNAME=${ROMM_USERNAME}
+      - HOMEPAGE_VAR_ROMM_PASSWORD=${ROMM_PASSWORD}
+      - HOMEPAGE_VAR_PVE_URL=${PVE_URL}
+      - HOMEPAGE_VAR_PVE_NODE=${PVE_NODE}
+      - HOMEPAGE_VAR_PVE_TOKEN=${PVE_TOKEN}
+      - HOMEPAGE_VAR_PVE_TOKEN_SECRET=${PVE_TOKEN_SECRET}
+      - OPENWEATHERMAP_API_KEY=${OPENWEATHERMAP_API_KEY}
+      - HOMEPAGE_VAR_PIHOLE_URL=${PIHOLE_URL}
+      - HOMEPAGE_VAR_PIHOLE_VMID=${PIHOLE_VMID}
+      - HOMEPAGE_VAR_PFSENSE_URL=${PFSENSE_URL}
+      - HOMEPAGE_VAR_PFSENSE_VMID=${PFSENSE_VMID}
+      - HOMEPAGE_VAR_PBS_URL=${PBS_URL}
+      - HOMEPAGE_VAR_PBS_VMID=${PBS_VMID}
+      - HOMEPAGE_VAR_TRUENAS_URL=${TRUENAS_URL}
+      - HOMEPAGE_VAR_TRUENAS_VMID=${TRUENAS_VMID}
+    volumes:
+      - /srv/homepage/config:/app/config:rw
+      - /srv/homepage/icons:/app/public/icons:rw
+      - /srv/homepage/images:/app/public/images:rw
+      - /mnt/sokolov:/mnt/sokolov:ro
+      - /mnt/pve:/mnt/pve:ro
+    networks:
+      - proxy
+    depends_on:
+      - dockerproxy
+    labels:
+      - com.centurylinklabs.watchtower.enable=true

@@ -1,0 +1,70 @@
+---
+title: Homelab Dashboard
+favicon: https://gethomepage.dev/img/favicon.ico
+
+background:
+  image: /images/background.png
+  blur: sm # sm, md, lg, xl... see https://tailwindcss.com/docs/backdrop-blur
+  saturate: 50 # 0, 50, 100... see https://tailwindcss.com/docs/backdrop-saturate
+  brightness: 50 # 0, 50, 75, 90, 100... see https://tailwindcss.com/docs/backdrop-brightness
+  opacity: 50 # 0-100
+
+theme: dark # or light
+
+color: slate
+
+layout:
+  Media:
+    style: row
+    columns: 3
+  Media Management:
+    style: row
+    columns: 4
+  Downloads:
+    style: row
+    columns: 3
+  Books & Comics:
+    style: row
+    columns: 3
+  Infrastructure:
+    style: row
+    columns: 5
+  Networking:
+    style: row
+    columns: 2
+  Data:
+    style: row
+    columns: 2
+  Monitoring:
+    style: row
+    columns: 2
+  AI & Automation:
+    style: row
+    columns: 2
+  Games:
+    style: row
+    columns: 2
+
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: false
+  showSearchSuggestions: true
+  hideVisitURL: false
+
+showStats: true
+
+language: pt-BR
+
+dateFormat: DD/MM/YYYY
+
+timeFormat: 24hour
+
+headerStyle: boxed # or underlined, clean
+
+hideErrors: false
+
+statusStyle: dot # or basic
+
+providers:
+  openweathermap: openweathermapapikey
+  weatherapi: weatherapiapikey
