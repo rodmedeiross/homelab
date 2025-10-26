@@ -10,11 +10,11 @@ services:
     image: ghcr.io/homarr-labs/homarr:latest
     restart: unless-stopped
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - /srv/homarr/config:/appdata
     environment:
       - SECRET_ENCRYPTION_KEY=${SECRET_ENCRYPTION_KEY}
-    networks:
-      - proxy
+      - DOCKER_HOSTNAMES=dockerproxy,10.10.1.30
+      - DOCKER_PORTS=2375,2375
+    networks: [proxy]
     labels:
       - com.centurylinklabs.watchtower.enable=true
