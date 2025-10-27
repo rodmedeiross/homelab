@@ -4,6 +4,8 @@ networks:
   proxy:
     name: proxy
     external: true
+  db:
+    external: true
 
 services:
   nginx-proxy-manager:
@@ -14,6 +16,9 @@ services:
       - "10.10.1.20:80:80"
       - "10.10.1.20:81:81"
       - "10.10.1.20:443:443"
+      - "10.10.1.20:3306:3306"
+      - "10.10.1.20:5432:5432"
+      - "10.10.1.20:6379:6379"
     volumes:
       - /srv/npm/data:/data
       - /srv/npm/letsencrypt:/etc/letsencrypt
@@ -21,6 +26,7 @@ services:
       TZ: America/Sao_Paulo
     networks:
       - proxy
+      - db
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://localhost:81 || exit 1"]
       interval: 30s

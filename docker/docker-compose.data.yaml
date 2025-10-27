@@ -1,0 +1,91 @@
+name: data
+
+networks:
+  proxy:
+    external: true
+  db:
+    name: db
+    driver: bridge
+
+x-common-env: &common-env
+  TZ: America/Sao_Paulo
+  PUID: 1000
+  PGID: 1000
+
+services:
+  bytebase:
+    image: bytebase/bytebase:latest
+    container_name: bytebase
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+    volumes:
+      - /srv/data/bytebase:/var/opt/bytebase
+    networks:
+      - proxy
+      - db
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  mariadb:
+    image: lscr.io/linuxserver/mariadb:11.4.5
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      <<: *common-env
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - /srv/data/mariadb/config:/config
+    networks:
+      - db
+    healthcheck:
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /srv/data/postgres:/var/lib/postgresql/data
+    networks:
+      - db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${SA} -d postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    command: >
+      redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - /srv/data/redis:/data
+    networks:
+      - db
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
