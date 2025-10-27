@@ -61,7 +61,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - /srv/data/postgres:/var/lib/postgresql/data
+      - /srv/data/postgres:/var/lib/postgresql
     networks:
       - db
     healthcheck:
