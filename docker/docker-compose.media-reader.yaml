@@ -42,7 +42,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   readarr:
-    image: lscr.io/linuxserver/readarr:latest
+    image: lscr.io/linuxserver/readarr:develop
     container_name: readarr
     restart: unless-stopped
     environment:
@@ -75,15 +75,15 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  # kapowarr:
-  #   image: mrcas/kapowarr:v1.2.0
-  #   container_name: kapowarr
-  #   restart: unless-stopped
-  #   volumes:
-  #     - /srv/media/kapowarr/db:/app/db:rw
-  #     - /mnt/sokolov/media/Comics:/comics:rw
-  #     - /mnt/pve/media/Downloads/torrents:/app/temp_downloads:rw
-  #   networks:
-  #     - media_net
-  #   labels:
-  #     - com.centurylinklabs.watchtower.enable=true
+  kapowarr:
+    image: mrcas/kapowarr:latest
+    container_name: kapowarr
+    restart: unless-stopped
+    volumes:
+      - /srv/media/kapowarr/db:/app/db:rw
+      - /mnt/sokolov/media/Comics:/comics:rw
+      - /mnt/pve/media/Downloads/torrents:/app/temp_downloads:rw
+    networks:
+      - media_net
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
