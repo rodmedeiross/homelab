@@ -11,7 +11,7 @@ x-common-env: &common-env
 
 services:
   kavita:
-    image: kizaing/kavita:latest
+    image: jvmilazz0/kavita:latest
     container_name: kavita
     restart: unless-stopped
     volumes:
@@ -57,15 +57,17 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   rreading-glasses:
-    image: blampe/rreading-glasses:hardcover
+    image: blampe/rreading-glasses:latest
     container_name: rreading-glasses
+    hostname: rreading-glasses
     restart: unless-stopped
     entrypoint: ["/main", "serve"]
     command:
+      - --upstream=www.goodreads.com
       - --verbose
     mem_limit: 128m
     environment:
-      HARDCOVER_AUTH: ${HARDCOVER_TOKEN}
+      # HARDCOVER_AUTH: ${HARDCOVER_TOKEN}
       POSTGRES_HOST: ${DB_RREADING_GLASSES_HOST}
       POSTGRES_DATABASE: ${DB_RREADING_GLASSES_DATABASE}
       POSTGRES_USER: ${DB_RREADING_GLASSES_USER}
