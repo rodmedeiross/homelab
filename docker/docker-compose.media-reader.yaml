@@ -67,7 +67,7 @@ services:
     environment:
       HARDCOVER_AUTH: ${HARDCOVER_TOKEN}
       POSTGRES_HOST: npm
-      POSTGRES_DATABASE: rreading-glasses
+      POSTGRES_DATABASE: rreading_glasses
       POSTGRES_USER: rg
       POSTGRES_PASSWORD: ${DB_RREADING_GLASSES_PASSWORD}
     networks:
