@@ -2,8 +2,6 @@ name: media-reader
 
 networks:
   media_net:
-    name: media_net
-  proxy:
     external: true
 
 x-common-env: &common-env
@@ -19,56 +17,73 @@ services:
     volumes:
       - /mnt/sokolov/media/Books:/data/books:ro
       - /srv/media/kavita/config:/kavita/config:rw
-    networks: [media_net, proxy]
+    networks:
+      - media_net
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  calibre-web:
-    image: lscr.io/linuxserver/calibre-web:latest
-    container_name: calibre-web
+  booklore:
+    image: booklore/booklore:latest
+    container_name: booklore
     restart: unless-stopped
     environment:
       <<: *common-env
-      DOCKER_MODS: linuxserver/mods:universal-calibre
+      DATABASE_URL: jdbc:mariadb://npm:3306/booklore
+      DATABASE_USERNAME: booklore
+      DATABASE_PASSWORD: ${DB_BOOKLORE_PASSWORD}
+      BOOKLORE_PORT: 3211
+    networks:
+      - media_net
     volumes:
-      - /srv/media/calibre-web/config:/config:rw
-      - /mnt/sokolov/media/Books/calibre:/books:rw
-    networks: [media_net, proxy]
+      - /srv/media/booklore/data:/app/data:rw
+      - /mnt/sokolov/media/Books:/books:rw
+      - /srv/media/booklore/bookdrop:/bookdrop:rw
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  lazylibrarian:
-    image: lscr.io/linuxserver/lazylibrarian:latest
-    container_name: lazylibrarian
+  readarr:
+    image: lscr.io/linuxserver/readarr:latest
+    container_name: readarr
     restart: unless-stopped
-    environment: *common-env
+    environment:
+      <<: *common-env
     volumes:
-      - /srv/media/lazylibrarian/config:/config:rw
+      - /srv/media/readarr/config:/config:rw
+      - /mnt/sokolov/media/Books:/books:rw
       - /mnt/pve/media/Downloads/torrents:/downloads:rw
-      - /mnt/sokolov/media/Books/calibre:/books:rw
-    networks: [media_net, proxy]
+    networks:
+      - media_net
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  ocrmypdf:
-    image: jbarlow83/ocrmypdf
-    container_name: ocrmypdf
+  rreading-glasses:
+    image: ghcr.io/blampe/rreading-glasses:latest
+    container_name: rreading-glasses
     restart: unless-stopped
+    entrypoint: ["/main", "serve"]
     command:
-      [
-        "--watch",
-        "/input",
-        "/output",
-        "--output-type",
-        "pdfa",
-        "--optimize",
-        "3",
-        "--language",
-        "eng",
-      ]
-    volumes:
-      - /mnt/sokolov/media/Books/inbox/raw:/input:rw
-      - /mnt/sokolov/media/Books/inbox/processed:/output:rw
-    networks: [media_net]
+      - --verbose
+    mem_limit: 128m
+    environment:
+      HARDCOVER_AUTH: ${HARDCOVER_TOKEN}
+      POSTGRES_HOST: npm
+      POSTGRES_DATABASE: rreading-glasses
+      POSTGRES_USER: rg
+      POSTGRES_PASSWORD: ${DB_RREADING_GLASSES_PASSWORD}
+    networks:
+     - media_net
     labels:
       - com.centurylinklabs.watchtower.enable=true
+
+  kapowarr:
+      image: mrcas/kapowarr:latest
+      container_name: kapowarr
+      restart: unless-stopped
+      volumes:
+        - /srv/media/kapowarr/db:/app/db:rw
+        - /mnt/sokolov/media/Comics:/comics:rw
+        - /mnt/pve/media/Downloads/torrents:/app/temp_downloads:rw
+      networks:
+        - media_net
+      labels:
+        - com.centurylinklabs.watchtower.enable=true
