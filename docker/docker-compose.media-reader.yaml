@@ -57,7 +57,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   rreading-glasses:
-    image: ghcr.io/blampe/rreading-glasses:latest
+    image: blampe/rreading-glasses:latest
     container_name: rreading-glasses
     restart: unless-stopped
     entrypoint: ["/main", "serve"]
