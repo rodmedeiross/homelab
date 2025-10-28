@@ -79,6 +79,8 @@ services:
     image: mrcas/kapowarr:latest
     container_name: kapowarr
     restart: unless-stopped
+    environment:
+      <<: *common-env
     volumes:
       - /srv/media/kapowarr/db:/app/db:rw
       - /mnt/sokolov/media/Comics:/comics:rw
