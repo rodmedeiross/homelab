@@ -76,14 +76,14 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   kapowarr:
-      image: mrcas/kapowarr:latest
-      container_name: kapowarr
-      restart: unless-stopped
-      volumes:
-        - /srv/media/kapowarr/db:/app/db:rw
-        - /mnt/sokolov/media/Comics:/comics:rw
-        - /mnt/pve/media/Downloads/torrents:/app/temp_downloads:rw
-      networks:
-        - media_net
-      labels:
-        - com.centurylinklabs.watchtower.enable=true
+    image: mrcas/kapowarr:latest
+    container_name: kapowarr
+    restart: unless-stopped
+    volumes:
+      - /srv/media/kapowarr/db:/app/db:rw
+      - /mnt/sokolov/media/Comics:/comics:rw
+      - /mnt/pve/media/Downloads/torrents:/app/temp_downloads:rw
+    networks:
+      - media_net
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
