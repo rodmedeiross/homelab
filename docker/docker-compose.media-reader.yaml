@@ -41,14 +41,15 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  readarr:
-    image: ghcr.io/hotio/readarr
-    container_name: readarr
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    container_name: lazylibrarian
     restart: unless-stopped
     environment:
       <<: *common-env
+      DOCKER_MODS: linuxserver/mods:lazylibrarian-ffmpeg
     volumes:
-      - /srv/media/readarr/config:/config:rw
+      - /srv/media/lazylibrarian/config:/config:rw
       - /mnt/sokolov/media/Books:/books:rw
       - /mnt/pve/media/Downloads/torrents:/downloads:rw
     networks:
@@ -56,24 +57,18 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  rreading-glasses:
-    image: blampe/rreading-glasses:latest
-    container_name: rreading-glasses
-    hostname: rreading-glasses
+  calibre:
+    image: lscr.io/linuxserver/calibre:latest
+    container_name: calibre
     restart: unless-stopped
-    entrypoint: ["/main", "serve"]
-    command:
-      - --upstream=www.goodreads.com
-      - --verbose
-    mem_limit: 128m
     environment:
-      # HARDCOVER_AUTH: ${HARDCOVER_TOKEN}
-      POSTGRES_HOST: ${DB_RREADING_GLASSES_HOST}
-      POSTGRES_DATABASE: ${DB_RREADING_GLASSES_DATABASE}
-      POSTGRES_USER: ${DB_RREADING_GLASSES_USER}
-      POSTGRES_PASSWORD: ${DB_RREADING_GLASSES_PASSWORD}
+      <<: *common-env
+      PASSWORD: ${CALIBRE_PASSWORD:-password}
+    volumes:
+      - /srv/media/calibre/config:/config:rw
+      - /mnt/sokolov/media/Books:/books:rw
     networks:
-     - media_net
+      - media_net
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
