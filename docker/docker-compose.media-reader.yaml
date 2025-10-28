@@ -76,7 +76,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   kapowarr:
-    image: mrcas/kapowarr:latest
+    image: mrcas/kapowarr:v1.2.0
     container_name: kapowarr
     restart: unless-stopped
     volumes:
