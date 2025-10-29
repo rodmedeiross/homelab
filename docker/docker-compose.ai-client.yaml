@@ -4,14 +4,16 @@ networks:
   proxy:
     external: true
 
+x-common-env: &common-env
+  TZ: America/Sao_Paulo
+
 services:
   openwebui:
     image: ghcr.io/open-webui/open-webui:latest
     container_name: openwebui
     restart: unless-stopped
     environment:
-      - TZ=America/Sao_Paulo
-      - OLLAMA_BASE_URL=http://ollama:11434
+      <<: *common-env
     volumes:
       - /srv/ai/openwebui/data:/app/backend/data:rw
     networks: [proxy]
@@ -23,12 +25,21 @@ services:
     container_name: n8n
     restart: unless-stopped
     environment:
-      - TZ=America/Sao_Paulo
-      - N8N_HOST=${N8N_HOST:-n8n.local}
-      - N8N_PROTOCOL=https
-      - N8N_PORT=5678
-      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:-change-me}
-      - GENERIC_TIMEZONE=${TZ}
+      <<: *common-env
+      N8N_HOST: ${N8N_HOST:-n8n.local}
+      N8N_PROTOCOL: https
+      N8N_PORT: 5678
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-change-me}
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+      N8N_RUNNERS_ENABLED: true
+      GENERIC_TIMEZONE: ${TZ}
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_DATABASE: ${POSTGRES_DATABASE}
+      DB_POSTGRESDB_HOST: ${POSTGRES_HOST}
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_USER: ${POSTGRES_USER}
+      DB_POSTGRESDB_SCHEMA: public
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - /srv/n8n:/home/node/.n8n:rw
     networks: [proxy]
@@ -39,14 +50,16 @@ services:
     image: docker/mcp-gateway:latest
     container_name: mcp-gateway
     restart: unless-stopped
-    # Transport "streaming" exposes HTTP/WS for multiple clients
     command:
       - --transport=streaming
       - --port=8811
-      # Enable MCP servers from catalog (examples below). Add/remove as needed:
-      - --servers=duckduckgo
+      - --catalog=/mcp/catalog.yaml
+      - --config=/mcp/config.yaml
+      - --registry=/mcp/registry.yaml
+      - --tools-config=/mcp/tools.yaml
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /srv/ai/mcp-gateway/config:/mcp:rw
     ports:
       - "8811:8811"
     networks: [proxy]
