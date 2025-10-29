@@ -6,6 +6,8 @@ networks:
 
 x-common-env: &common-env
   TZ: America/Sao_Paulo
+  PUID: 1000
+  PGID: 1000
 
 services:
   openwebui:
@@ -50,6 +52,8 @@ services:
     image: docker/mcp-gateway:latest
     container_name: mcp-gateway
     restart: unless-stopped
+    environment:
+      <<: *common-env
     command:
       - --transport=streaming
       - --port=8811
