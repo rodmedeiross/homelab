@@ -4,18 +4,13 @@ networks:
   proxy:
     external: true
 
-x-common-env: &common-env
-  TZ: America/Sao_Paulo
-  PUID: 1000
-  PGID: 1000
-
 services:
   openwebui:
     image: ghcr.io/open-webui/open-webui:latest
     container_name: openwebui
     restart: unless-stopped
     environment:
-      <<: *common-env
+      TZ: America/Sao_Paulo
     volumes:
       - /srv/ai/openwebui/data:/app/backend/data:rw
     networks: [proxy]
@@ -26,15 +21,16 @@ services:
     image: docker.n8n.io/n8nio/n8n:latest
     container_name: n8n
     restart: unless-stopped
+    user: "1000:1000"
     environment:
-      <<: *common-env
+      GENERIC_TIMEZONE: America/Sao_Paulo
+      TZ: ${GENERIC_TIMEZONE}
       N8N_HOST: ${N8N_HOST:-n8n.local}
       N8N_PROTOCOL: https
       N8N_PORT: 5678
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-change-me}
-      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: true
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: false
       N8N_RUNNERS_ENABLED: true
-      GENERIC_TIMEZONE: ${TZ}
       DB_TYPE: postgresdb
       DB_POSTGRESDB_DATABASE: n8n
       DB_POSTGRESDB_HOST: ${POSTGRES_HOST}
@@ -52,8 +48,6 @@ services:
     image: docker/mcp-gateway:latest
     container_name: mcp-gateway
     restart: unless-stopped
-    environment:
-      <<: *common-env
     command:
       - --transport=streaming
       - --port=8811
