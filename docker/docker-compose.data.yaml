@@ -14,7 +14,7 @@ x-common-env: &common-env
 
 services:
   bytebase:
-    image: bytebase/bytebase:latest
+    image: bytebase/bytebase:3.12.5
     container_name: bytebase
     restart: unless-stopped
     environment:
@@ -30,7 +30,7 @@ services:
       timeout: 5s
       retries: 10
     labels:
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
   mariadb:
     image: lscr.io/linuxserver/mariadb:latest
