@@ -14,7 +14,7 @@ x-common-env: &common-env
 
 services:
   bytebase:
-    image: bytebase/bytebase:3.12.5
+    image: bytebase/bytebase:3.12.2
     container_name: bytebase
     restart: unless-stopped
     environment:
