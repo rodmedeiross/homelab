@@ -22,7 +22,7 @@ services:
       - "8081:80"
       - "2222:22"
     networks:
-      - plaform
+      - platform
     volumes:
       - /srv/platform/gitlab/config:/etc/gitlab
       - /srv/platform/gitlab/logs:/var/log/gitlab
