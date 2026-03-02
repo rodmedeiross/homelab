@@ -13,8 +13,8 @@ services:
       - /srv/homarr/config:/appdata
     environment:
       - SECRET_ENCRYPTION_KEY=${SECRET_ENCRYPTION_KEY}
-      - DOCKER_HOSTNAMES=dockerproxy,10.10.1.30
-      - DOCKER_PORTS=2375,2375
+      - DOCKER_HOSTNAMES=dockerproxy,10.10.1.30,10.10.2.10
+      - DOCKER_PORTS=2375,2375,2375
     networks: [proxy]
     labels:
       - com.centurylinklabs.watchtower.enable=true
