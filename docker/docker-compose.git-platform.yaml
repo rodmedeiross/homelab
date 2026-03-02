@@ -18,6 +18,13 @@ services:
         nginx['listen_https'] = false
         letsencrypt['enable'] = false
         gitlab_rails['gitlab_shell_ssh_port'] = 2222
+        gitlab_rails['smtp_enable'] = true
+        gitlab_rails['smtp_address'] = "${SMTP_HOST}"
+        gitlab_rails['smtp_port'] = 25
+        gitlab_rails['smtp_domain'] = "${SMTP_DOMAIN}"
+        gitlab_rails['smtp_authentication'] = false
+        gitlab_rails['smtp_enable_starttls_auto'] = false
+        gitlab_rails['gitlab_email_from'] = "gitlab@${SMTP_DOMAIN}"
     ports:
       - "8081:80"
       - "2222:22"
