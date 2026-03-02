@@ -35,7 +35,7 @@ prometheus.exporter.unix "encaged" {
 
 // Scrape node exporter metrics
 prometheus.scrape "encaged_metrics" {
-  targets    = prometheus.exporter.unix.mobydick.targets
+  targets    = prometheus.exporter.unix.encaged.targets
   forward_to = [prometheus.remote_write.default.receiver]
   scrape_interval = "15s"
 }
@@ -44,7 +44,7 @@ prometheus.scrape "encaged_metrics" {
 prometheus.scrape "watchtower_local" {
   targets = [{
     __address__ = "watchtower:8080",
-    host = "mobydick",
+    host = "encaged",
     service = "watchtower",
   }]
   forward_to = [prometheus.remote_write.default.receiver]
