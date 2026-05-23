@@ -119,7 +119,7 @@ services:
       - "8000:8000"
     environment:
       - DB_CONNECTION_URI=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@10.10.1.20:5433/${HONCHO_DB:-honcho}
-      - CACHE_URL=redis://:${REDIS_PASSWORD}@10.10.1.20:6379/0
+      - CACHE_URL=redis://:${REDIS_PASSWORD_URLENCODED}@10.10.1.20:6379/0
       - CACHE_ENABLED=true
       - AUTH_USE_AUTH=true
       - AUTH_JWT_SECRET=${HONCHO_JWT_SECRET}
@@ -149,7 +149,7 @@ services:
         condition: service_healthy
     environment:
       - DB_CONNECTION_URI=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@10.10.1.20:5433/${HONCHO_DB:-honcho}
-      - CACHE_URL=redis://:${REDIS_PASSWORD}@10.10.1.20:6379/0
+      - CACHE_URL=redis://:${REDIS_PASSWORD_URLENCODED}@10.10.1.20:6379/0
       - CACHE_ENABLED=true
       - AUTH_USE_AUTH=true
       - AUTH_JWT_SECRET=${HONCHO_JWT_SECRET}
