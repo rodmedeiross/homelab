@@ -16,45 +16,40 @@ services:
     ports:
       - "11434:11434" # Ollama HTTP API (restrict in firewall if preferred)
     volumes:
-      - ${AI_PATH}/ollama:/root/.ollama:rw
+      - /srv/ai/ollama:/root/.ollama:rw
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  # ===== OPTIONAL (examples) — comment/uncomment when using =====
-  # whisper:
-  #   image: ghcr.io/ggerganov/whisper.cpp:latest
-  #   container_name: whisper
-  #   restart: unless-stopped
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             capabilities: ["gpu"]
-  #   environment:
-  #     - TZ=${TZ}
-  #   volumes:
-  #     - ${AI_PATH}/whisper:/data:rw
-  #   networks: [ai_net]
-  #   labels:
-  #     - com.centurylinklabs.watchtower.enable=true
+  honcho-api:
+    image: ghcr.io/plastic-labs/honcho:latest
+    container_name: honcho-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_CONNECTION_URI=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@10.10.1.20:5433/${HONCHO_DB:-honcho}
+      - CACHE_URL=redis://:${REDIS_PASSWORD}@10.10.1.20:6379/0
+      - CACHE_ENABLED=true
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
 
-  # comfyui:
-  #   image: ghcr.io/comfyanonymous/comfyui:latest
-  #   container_name: comfyui
-  #   restart: unless-stopped
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             capabilities: ["gpu"]
-  #   environment:
-  #     - TZ=${TZ}
-  #   volumes:
-  #     - ${AI_PATH}/comfyui:/root/ComfyUI:rw
-  #   ports:
-  #     - "8188:8188"
-  #   networks: [ai_net, proxy]
-  #   labels:
-  #     - com.centurylinklabs.watchtower.enable=true
+  honcho-deriver:
+    image: ghcr.io/plastic-labs/honcho:latest
+    container_name: honcho-deriver
+    restart: unless-stopped
+    command: ["/app/.venv/bin/python", "-m", "src.deriver"]
+    depends_on:
+      honcho-api:
+        condition: service_healthy
+    environment:
+      - DB_CONNECTION_URI=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@10.10.1.20:5433/${HONCHO_DB:-honcho}
+      - CACHE_URL=redis://:${REDIS_PASSWORD}@10.10.1.20:6379/0
+      - CACHE_ENABLED=true
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
