@@ -96,15 +96,16 @@ services:
     restart: unless-stopped
     command: ["postgres", "-c", "max_connections=200"]
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${PGVECTOR_USER}
+      POSTGRES_PASSWORD: ${PGVECTOR_PASSWORD}
       POSTGRES_DB: ${HONCHO_DB:-honcho}
     volumes:
       - /srv/data/pgvector:/var/lib/postgresql/data
     networks:
       - db
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${HONCHO_DB:-honcho}"]
+      test:
+        ["CMD-SHELL", "pg_isready -U ${PGVECTOR_USER} -d ${HONCHO_DB:-honcho}"]
       interval: 5s
       timeout: 5s
       retries: 5
