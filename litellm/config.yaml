@@ -24,8 +24,8 @@ litellm_settings:
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
   database_url: os.environ/LITELLM_DATABASE_URL
-  ui_username: os.environ/LITELLM_UI_USER
-  ui_password: os.environ/LITELLM_UI_PASS
+  # UI credentials lidos direto de env vars UI_USERNAME / UI_PASSWORD pelo LiteLLM
+  # (config.yaml não suporta os.environ/ pra esses campos)
   # Modelos vivem no banco → editar pela UI sem rebuild
   store_model_in_db: true
   # Loga prompt/response no spend log pra debug (desligar se for sensível)
