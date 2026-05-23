@@ -24,6 +24,7 @@ services:
     image: ghcr.io/plastic-labs/honcho:latest
     container_name: honcho-api
     restart: unless-stopped
+    entrypoint: ["sh", "/app/docker/entrypoint.sh"]
     ports:
       - "8000:8000"
     environment:
@@ -31,11 +32,17 @@ services:
       - CACHE_URL=redis://:${REDIS_PASSWORD}@10.10.1.20:6379/0
       - CACHE_ENABLED=true
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8000/health || exit 1"]
+      test:
+        [
+          "CMD",
+          "/app/.venv/bin/python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2).read()",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 60s
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
