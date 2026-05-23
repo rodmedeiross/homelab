@@ -1,5 +1,10 @@
 name: ai-core
 
+networks:
+  ai_net:
+    name: ai_net
+    driver: bridge
+
 services:
   ollama:
     image: ollama/ollama:latest
@@ -17,8 +22,95 @@ services:
       - "11434:11434" # Ollama HTTP API (restrict in firewall if preferred)
     volumes:
       - /srv/ai/ollama:/root/.ollama:rw
+    networks: [ai_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true
+
+  comfyui:
+    image: ghcr.io/ai-dock/comfyui:latest-cuda
+    container_name: comfyui
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - WEB_ENABLE_AUTH=false
+      - CF_QUICK_TUNNELS=false
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: ["gpu"]
+    ports:
+      - "8188:8188" # ComfyUI web UI
+    volumes:
+      - /srv/ai/comfyui:/workspace:rw
+    networks: [ai_net]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  speaches:
+    image: ghcr.io/speaches-ai/speaches:latest-cuda
+    container_name: speaches
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - WHISPER__MODEL=${SPEACHES_MODEL:-Systran/faster-whisper-large-v3}
+      - WHISPER__COMPUTE_TYPE=${SPEACHES_COMPUTE:-float16}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: ["gpu"]
+    ports:
+      - "8001:8000" # OpenAI-compatible STT/TTS API
+    volumes:
+      - /srv/ai/speaches:/root/.cache/huggingface:rw
+    networks: [ai_net]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  litellm:
+    image: ghcr.io/berriai/litellm-database:main-stable
+    container_name: litellm
+    restart: unless-stopped
+    command:
+      [
+        "--config",
+        "/etc/litellm/config.yaml",
+        "--port",
+        "4000",
+        "--num_workers",
+        "4",
+      ]
+    ports:
+      - "4000:4000" # OpenAI-compatible proxy
+    volumes:
+      - /srv/ai/litellm:/etc/litellm:ro
+    environment:
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
+      - LITELLM_DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@10.10.1.20:5433/litellm
+      - LITELLM_UI_USER=${LITELLM_UI_USER:-admin}
+      - LITELLM_UI_PASS=${LITELLM_UI_PASS}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - LITELLM_LOG=INFO
+    depends_on:
+      - ollama
+    networks: [ai_net]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'python -c "import urllib.request; urllib.request.urlopen(''http://127.0.0.1:4000/health/liveliness'', timeout=3)" || exit 1',
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    labels:
+      - com.centurylinklabs.watchtower.enable=false # pinar via tag main-stable
 
   honcho-api:
     image: ghcr.io/plastic-labs/honcho:latest
@@ -33,6 +125,7 @@ services:
       - CACHE_ENABLED=true
       - AUTH_USE_AUTH=true
       - AUTH_JWT_SECRET=${HONCHO_JWT_SECRET}
+    networks: [ai_net]
     healthcheck:
       test:
         [
@@ -62,5 +155,6 @@ services:
       - CACHE_ENABLED=true
       - AUTH_USE_AUTH=true
       - AUTH_JWT_SECRET=${HONCHO_JWT_SECRET}
+    networks: [ai_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true

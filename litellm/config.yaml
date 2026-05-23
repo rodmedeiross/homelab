@@ -1,0 +1,32 @@
+# LiteLLM proxy — config mínimo
+#
+# Modelos, virtual keys, budgets, fallbacks e users são gerenciados via UI:
+#   http://10.10.1.20:4000/ui
+#
+# Tudo persiste no banco `litellm` dentro do pgvector (volume /srv/data/pgvector).
+# Este arquivo guarda APENAS o que precisa estar disponível antes do banco
+# subir: cache, callbacks, settings globais e bootstrap da UI.
+
+litellm_settings:
+  # Cache de respostas no Redis (compartilhado com honcho)
+  cache: true
+  cache_params:
+    type: redis
+    host: 10.10.1.20
+    port: 6379
+    password: os.environ/REDIS_PASSWORD
+    ttl: 3600
+  drop_params: true
+  json_logs: true
+  # Métricas Prometheus em /metrics (scrape pelo Alloy)
+  callbacks: ["prometheus"]
+
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
+  database_url: os.environ/LITELLM_DATABASE_URL
+  ui_username: os.environ/LITELLM_UI_USER
+  ui_password: os.environ/LITELLM_UI_PASS
+  # Modelos vivem no banco → editar pela UI sem rebuild
+  store_model_in_db: true
+  # Loga prompt/response no spend log pra debug (desligar se for sensível)
+  store_prompts_in_spend_logs: true
