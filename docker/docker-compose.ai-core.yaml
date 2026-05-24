@@ -126,6 +126,11 @@ services:
       # LLM provider — point to local LiteLLM instead of OpenAI
       - LLM_OPENAI_BASE_URL=http://litellm:4000/v1
       - LLM_OPENAI_API_KEY=${HONCHO_DERIVER_KEY}
+      # Embeddings — route via LiteLLM to local nomic-embed-text (768d)
+      - EMBEDDING_MODEL_CONFIG__TRANSPORT=openai
+      - EMBEDDING_MODEL_CONFIG__MODEL=local-embed
+      - EMBEDDING_MODEL_CONFIG__OVERRIDES__BASE_URL=http://litellm:4000/v1
+      - EMBEDDING_VECTOR_DIMENSIONS=768
     networks: [ai_net]
     healthcheck:
       test:
@@ -161,6 +166,11 @@ services:
       - LLM_OPENAI_API_KEY=${HONCHO_DERIVER_KEY}
       - DERIVER_MODEL_CONFIG__TRANSPORT=openai
       - DERIVER_MODEL_CONFIG__MODEL=local-deriver
+      # Embeddings — route via LiteLLM to local nomic-embed-text (768d)
+      - EMBEDDING_MODEL_CONFIG__TRANSPORT=openai
+      - EMBEDDING_MODEL_CONFIG__MODEL=local-embed
+      - EMBEDDING_MODEL_CONFIG__OVERRIDES__BASE_URL=http://litellm:4000/v1
+      - EMBEDDING_VECTOR_DIMENSIONS=768
     networks: [ai_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true
