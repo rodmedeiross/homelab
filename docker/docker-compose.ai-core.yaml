@@ -108,7 +108,7 @@ services:
       retries: 5
       start_period: 30s
     labels:
-      - com.centurylinklabs.watchtower.enable=false # pinar via tag main-stable
+      - com.centurylinklabs.watchtower.enable=false # pinned via main-stable tag
 
   honcho-api:
     image: ghcr.io/plastic-labs/honcho:latest
@@ -123,6 +123,9 @@ services:
       - CACHE_ENABLED=true
       - AUTH_USE_AUTH=true
       - AUTH_JWT_SECRET=${HONCHO_JWT_SECRET}
+      # LLM provider — point to local LiteLLM instead of OpenAI
+      - LLM_OPENAI_BASE_URL=http://litellm:4000/v1
+      - LLM_OPENAI_API_KEY=${HONCHO_DERIVER_KEY}
     networks: [ai_net]
     healthcheck:
       test:
@@ -153,6 +156,11 @@ services:
       - CACHE_ENABLED=true
       - AUTH_USE_AUTH=true
       - AUTH_JWT_SECRET=${HONCHO_JWT_SECRET}
+      # LLM provider — point to local LiteLLM and use local model
+      - LLM_OPENAI_BASE_URL=http://litellm:4000/v1
+      - LLM_OPENAI_API_KEY=${HONCHO_DERIVER_KEY}
+      - DERIVER_MODEL_CONFIG__TRANSPORT=openai
+      - DERIVER_MODEL_CONFIG__MODEL=local-deriver
     networks: [ai_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true

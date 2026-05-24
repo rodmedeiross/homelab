@@ -1,14 +1,15 @@
-# LiteLLM proxy — config mínimo
+# LiteLLM proxy — minimal config
 #
-# Modelos, virtual keys, budgets, fallbacks e users são gerenciados via UI:
+# Models, virtual keys, budgets, fallbacks and users are managed via UI:
 #   http://10.10.1.20:4000/ui
 #
-# Tudo persiste no banco `litellm` dentro do pgvector (volume /srv/data/pgvector).
-# Este arquivo guarda APENAS o que precisa estar disponível antes do banco
-# subir: cache, callbacks, settings globais e bootstrap da UI.
+# Everything persists in the `litellm` database inside pgvector
+# (volume /srv/data/pgvector). This file holds only what must be
+# available before the database comes up: cache, callbacks, global
+# settings and UI bootstrap.
 
 litellm_settings:
-  # Cache de respostas no Redis (compartilhado com honcho)
+  # Response cache in Redis (shared with honcho)
   cache: true
   cache_params:
     type: redis
@@ -18,15 +19,15 @@ litellm_settings:
     ttl: 3600
   drop_params: true
   json_logs: true
-  # Métricas Prometheus em /metrics (scrape pelo Alloy)
+  # Prometheus metrics at /metrics (scraped by Alloy)
   callbacks: ["prometheus"]
 
 general_settings:
   master_key: os.environ/LITELLM_MASTER_KEY
   database_url: os.environ/LITELLM_DATABASE_URL
-  # UI credentials lidos direto de env vars UI_USERNAME / UI_PASSWORD pelo LiteLLM
-  # (config.yaml não suporta os.environ/ pra esses campos)
-  # Modelos vivem no banco → editar pela UI sem rebuild
+  # UI credentials are read directly from env vars UI_USERNAME / UI_PASSWORD
+  # by LiteLLM (config.yaml doesn't support os.environ/ for these fields)
+  # Models live in the database → edit via UI without rebuild
   store_model_in_db: true
-  # Loga prompt/response no spend log pra debug (desligar se for sensível)
+  # Log prompt/response in spend log for debugging (disable if sensitive)
   store_prompts_in_spend_logs: true
