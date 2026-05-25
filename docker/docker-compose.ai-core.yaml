@@ -143,6 +143,20 @@ services:
       - EMBEDDING_MODEL_CONFIG__MODEL=local-embed
       - EMBEDDING_MODEL_CONFIG__OVERRIDES__BASE_URL=http://litellm:4000/v1
       - EMBEDDING_VECTOR_DIMENSIONS=768
+      # Dialectic — peer.chat() reasoning, all 5 levels use local-smart
+      - DIALECTIC_LEVELS__MINIMAL__MODEL_CONFIG__TRANSPORT=openai
+      - DIALECTIC_LEVELS__MINIMAL__MODEL_CONFIG__MODEL=local-smart
+      - DIALECTIC_LEVELS__LOW__MODEL_CONFIG__TRANSPORT=openai
+      - DIALECTIC_LEVELS__LOW__MODEL_CONFIG__MODEL=local-smart
+      - DIALECTIC_LEVELS__MEDIUM__MODEL_CONFIG__TRANSPORT=openai
+      - DIALECTIC_LEVELS__MEDIUM__MODEL_CONFIG__MODEL=local-smart
+      - DIALECTIC_LEVELS__HIGH__MODEL_CONFIG__TRANSPORT=openai
+      - DIALECTIC_LEVELS__HIGH__MODEL_CONFIG__MODEL=local-smart
+      - DIALECTIC_LEVELS__MAX__MODEL_CONFIG__TRANSPORT=openai
+      - DIALECTIC_LEVELS__MAX__MODEL_CONFIG__MODEL=local-smart
+      # Summary — session/long summary generation
+      - SUMMARY_MODEL_CONFIG__TRANSPORT=openai
+      - SUMMARY_MODEL_CONFIG__MODEL=local-smart
     networks: [ai_net]
     healthcheck:
       test:
