@@ -11,6 +11,8 @@ services:
     restart: unless-stopped
     environment:
       TZ: America/Sao_Paulo
+      # Allow fetching URLs that resolve to private/local IPs
+      ENABLE_RAG_LOCAL_WEB_FETCH: "true"
     volumes:
       - /srv/ai/openwebui/data:/app/backend/data:rw
     networks: [proxy]
