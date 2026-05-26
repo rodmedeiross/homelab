@@ -28,14 +28,20 @@ services:
 
   comfyui:
     image: comfyui-blackwell:cu128
-    build:
-      context: ./comfyui
+    # Build is performed manually on the host to avoid Portainer's buildkit
+    # When the Dockerfile changes, rebuild locally with:
+    #   docker compose -f docker-compose.ai-core.yaml build comfyui
+    # then re-enable `build:` here only if a registry-based flow is set up.
+    # build:
+    #   context: ./comfyui
     container_name: comfyui
     restart: unless-stopped
     environment:
       - TZ=${TZ}
       - WEB_ENABLE_AUTH=false
       - CF_QUICK_TUNNELS=false
+      # Reserve 4GB of VRAM so co-tenant services
+      - CLI_ARGS=--reserve-vram 4
     deploy:
       resources:
         reservations:
@@ -43,7 +49,7 @@ services:
             - driver: nvidia
               capabilities: ["gpu"]
     ports:
-      - "8188:8188" # ComfyUI web UI
+      - "8188:8188" # ComfyUI web UI (Caddy proxies to internal :18188)
     volumes:
       - /srv/ai/comfyui/models:/opt/ComfyUI/models:rw
       - /srv/ai/comfyui/custom_nodes:/opt/ComfyUI/custom_nodes:rw
