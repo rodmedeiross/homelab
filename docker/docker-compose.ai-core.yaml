@@ -43,7 +43,10 @@ services:
     ports:
       - "8188:8188" # ComfyUI web UI
     volumes:
-      - /srv/ai/comfyui:/workspace:rw
+      - /srv/ai/comfyui/models:/opt/ComfyUI/models:rw
+      - /srv/ai/comfyui/custom_nodes:/opt/ComfyUI/custom_nodes:rw
+      - /srv/ai/comfyui/output:/opt/ComfyUI/output:rw
+      - /srv/ai/comfyui/user:/opt/ComfyUI/user:rw
     networks: [ai_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true
@@ -65,7 +68,7 @@ services:
     ports:
       - "8001:8000" # OpenAI-compatible STT/TTS API
     volumes:
-      - /srv/ai/speaches:/root/.cache/huggingface:rw
+      - /srv/ai/speaches:/home/ubuntu/.cache/huggingface:rw
     networks: [ai_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true
