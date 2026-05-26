@@ -27,7 +27,9 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   comfyui:
-    image: ghcr.io/ai-dock/comfyui:latest-cuda
+    image: comfyui-blackwell:cu128
+    build:
+      context: ./comfyui
     container_name: comfyui
     restart: unless-stopped
     environment:
