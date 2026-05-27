@@ -203,6 +203,9 @@ services:
       - LLM_OPENAI_API_KEY=${HONCHO_DERIVER_KEY}
       - DERIVER_MODEL_CONFIG__TRANSPORT=openai
       - DERIVER_MODEL_CONFIG__MODEL=local-deriver
+      # Summary — short/long summary generation runs inside the deriver worker
+      - SUMMARY_MODEL_CONFIG__TRANSPORT=openai
+      - SUMMARY_MODEL_CONFIG__MODEL=local-smart
       # Embeddings — route via LiteLLM to local nomic-embed-text (768d)
       - EMBEDDING_MODEL_CONFIG__TRANSPORT=openai
       - EMBEDDING_MODEL_CONFIG__MODEL=local-embed
