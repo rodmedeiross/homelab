@@ -81,6 +81,7 @@ services:
     restart: unless-stopped
     environment:
       TZ: America/Sao_Paulo
+      DOCKER_API_VERSION: "1.44"
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_LABEL_ENABLE: "true"
       WATCHTOWER_SCHEDULE: "0 0 5 * * *"
