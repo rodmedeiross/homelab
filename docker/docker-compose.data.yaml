@@ -111,3 +111,27 @@ services:
       retries: 5
     labels:
       - com.centurylinklabs.watchtower.enable=false
+
+  filebrowser:
+    image: filebrowser/filebrowser:latest
+    container_name: filebrowser
+    restart: unless-stopped
+    user: "${PUID:-1000}:${PGID:-1000}"
+    environment:
+      <<: *common-env
+      FB_DATABASE: /database/filebrowser.db
+      FB_ROOT: /srv
+    volumes:
+      - /srv/data/filebrowser/database:/database
+      - /srv/data/filebrowser/config:/config
+      - /mnt/sokolov:/srv/sokolov
+      - /mnt/pve/media:/srv/pve-media
+    networks:
+      - proxy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:80/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
