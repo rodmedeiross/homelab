@@ -16,4 +16,9 @@ registry:
         Authorization: "Bearer ${HONCHO_API_KEY}"
         X-Honcho-User-Name: "rodmedeiross"
         X-Honcho-Workspace-ID: "personal"
+    # Declares the secret so the gateway resolves ${HONCHO_API_KEY} in the header.
+    # The `name` (honcho.api_key) is the key in secrets.env; `env` is the ${var}.
+    secrets:
+      - name: honcho.api_key
+        env: HONCHO_API_KEY
     tools: []
