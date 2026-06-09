@@ -3,6 +3,8 @@ name: ai-client
 networks:
   proxy:
     external: true
+  mcp_net:
+    driver: bridge
 
 services:
   openwebui:
@@ -78,14 +80,27 @@ services:
       - --transport=streaming
       - --port=8811
       - --catalog=/mcp/catalog.yaml
-      - --config=/mcp/config.yaml
-      - --registry=/mcp/registry.yaml
-      - --tools-config=/mcp/tools.yaml
+      # --servers replaces registry.yaml: just name the catalog entries to enable.
+      - --servers=honcho
+      - --secrets=/mcp/secrets.env
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:rw
-      - /srv/ai/mcp-gateway/config:/mcp:rw
+      - /srv/ai/mcp-gateway/config:/mcp:ro
     ports:
       - "8811:8811"
-    networks: [proxy]
+    networks: [proxy, mcp_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true
+
+  # Honcho MCP worker wraps the remote honcho-api as an MCP server
+  # for the gateway. Build the image:
+  #   docker build -t honcho-mcp:local <repo>/docker/honcho-mcp
+  honcho-mcp:
+    image: honcho-mcp:local
+    container_name: honcho-mcp
+    restart: unless-stopped
+    environment:
+      - HONCHO_API_URL=${HONCHO_API_URL}
+    networks: [mcp_net]
+    labels:
+      - com.centurylinklabs.watchtower.enable=false

@@ -1,0 +1,19 @@
+version: 2
+name: homelab
+displayName: Homelab MCP Catalog
+registry:
+  honcho:
+    description: Self-hosted Honcho memory & personalization for rodmedeiross.
+    title: Honcho Memory
+    type: remote
+    ref: ""
+    remote:
+      transport_type: streamable-http
+      url: http://honcho-mcp:8787
+      # The gateway injects these so clients never carry
+      # the Honcho admin JWT. ${HONCHO_API_KEY} is resolved from secrets.env.
+      headers:
+        Authorization: "Bearer ${HONCHO_API_KEY}"
+        X-Honcho-User-Name: "rodmedeiross"
+        X-Honcho-Workspace-ID: "personal"
+    tools: []

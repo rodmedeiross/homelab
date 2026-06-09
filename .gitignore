@@ -1,0 +1,4 @@
+# Secrets — never commit
+docker/mcp-gateway/config/secrets.env
+**/.dev.vars
+.env
