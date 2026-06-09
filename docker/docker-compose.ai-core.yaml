@@ -57,7 +57,7 @@ services:
       - /srv/ai/comfyui/user:/opt/ComfyUI/user:rw
     networks: [ai_net]
     labels:
-      - com.centurylinklabs.watchtower.enable=true
+      - com.centurylinklabs.watchtower.enable=false
 
   speaches:
     image: ghcr.io/speaches-ai/speaches:latest-cuda

@@ -76,6 +76,11 @@ services:
     image: docker/mcp-gateway:latest
     container_name: mcp-gateway
     restart: unless-stopped
+    # No raw docker.sock: only server is `honcho` (remote), so the gateway never
+    # spawns stdio containers. Point it at the existing read-mostly socket proxy
+    # (infra-core `dockerproxy`, POST=0) so any docker ping is filtered.
+    environment:
+      - DOCKER_HOST=tcp://dockerproxy:2375
     # The gateway enumerates remote tools once at boot and does not retry, so it
     # must start only after honcho-mcp is actually listening (wrangler dev is slow).
     depends_on:
@@ -89,7 +94,6 @@ services:
       - --servers=honcho
       - --secrets=/mcp/secrets.env
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:rw
       - /srv/ai/mcp-gateway/config:/mcp:ro
     ports:
       - "8811:8811"
