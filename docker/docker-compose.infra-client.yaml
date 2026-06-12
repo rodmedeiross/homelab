@@ -46,6 +46,7 @@ services:
     restart: unless-stopped
     environment:
       - TZ=America/Sao_Paulo
+      - DOCKER_API_VERSION=1.44
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
       - WATCHTOWER_SCHEDULE=0 0 8 * * *
@@ -62,6 +63,8 @@ services:
       - "10.10.1.30:8080:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Private-registry auth (root's docker login) so watchtower can poll harbor images
+      - /root/.docker/config.json:/config.json:ro
     logging:
       driver: json-file
       options:

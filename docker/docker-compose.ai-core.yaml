@@ -27,13 +27,13 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   comfyui:
-    image: comfyui-blackwell:cu128
-    # Build is performed manually on the host to avoid Portainer's buildkit
-    # When the Dockerfile changes, rebuild locally with:
+    image: harbor.${DOMAIN}/homelab/comfyui-blackwell:cu128
+    # Image is built on the host and pushed to the private registry.
+    # When the Dockerfile changes:
     #   docker compose -f docker-compose.ai-core.yaml build comfyui
-    # then re-enable `build:` here only if a registry-based flow is set up.
-    # build:
-    #   context: ./comfyui
+    #   docker tag comfyui-blackwell:cu128 harbor.${DOMAIN}/homelab/comfyui-blackwell:cu128
+    #   docker push harbor.${DOMAIN}/homelab/comfyui-blackwell:cu128
+    # Watchtower picks up the new digest on its next poll and recreates the container.
     container_name: comfyui
     restart: unless-stopped
     environment:
@@ -57,7 +57,7 @@ services:
       - /srv/ai/comfyui/user:/opt/ComfyUI/user:rw
     networks: [ai_net]
     labels:
-      - com.centurylinklabs.watchtower.enable=false
+      - com.centurylinklabs.watchtower.enable=true
 
   speaches:
     image: ghcr.io/speaches-ai/speaches:latest-cuda
