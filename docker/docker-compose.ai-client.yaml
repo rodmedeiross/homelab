@@ -101,10 +101,7 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  # Honcho MCP worker wraps the remote honcho-api as an MCP server
-  # for the gateway. Built on the host and pushed to the private registry:
-  #   docker build -t harbor.${DOMAIN}/homelab/honcho-mcp:latest <repo>/docker/honcho-mcp
-  #   docker push harbor.${DOMAIN}/homelab/honcho-mcp:latest
+  # Honcho MCP worker wraps the remote honcho-api as an MCP server for the gateway.
   honcho-mcp:
     image: harbor.${DOMAIN}/homelab/honcho-mcp:latest
     container_name: honcho-mcp

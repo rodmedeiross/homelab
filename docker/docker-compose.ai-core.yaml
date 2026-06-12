@@ -28,11 +28,6 @@ services:
 
   comfyui:
     image: harbor.${DOMAIN}/homelab/comfyui-blackwell:cu128
-    # Image is built on the host and pushed to the private registry.
-    # When the Dockerfile changes:
-    #   docker compose -f docker-compose.ai-core.yaml build comfyui
-    #   docker tag comfyui-blackwell:cu128 harbor.${DOMAIN}/homelab/comfyui-blackwell:cu128
-    #   docker push harbor.${DOMAIN}/homelab/comfyui-blackwell:cu128
     # Watchtower picks up the new digest on its next poll and recreates the container.
     container_name: comfyui
     restart: unless-stopped
