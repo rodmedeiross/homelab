@@ -37,3 +37,40 @@ services:
       - /srv/platform/gitlab/data:/var/opt/gitlab
     labels:
       - com.centurylinklabs.watchtower.enable=true
+
+  # Two-runner model: jobs do NOT get the host docker.sock by default; only
+  # jobs tagged `docker-build` (image build/push to Harbor) do.
+  #
+  # In GitLab UI (Admin > CI/CD > Runners > New instance runner) create TWO
+  # runners — tags and "run untagged jobs" live in the UI, not in register:
+  #   1. "general": no tags, "Run untagged jobs" CHECKED
+  #   2. "docker-build": tag `docker-build`, "Run untagged jobs" UNCHECKED
+  # Then register each (token = glrt-... from the UI):
+  #   docker exec gitlab-runner gitlab-runner register --non-interactive \
+  #     --url "https://gitlab.${DOMAIN}" --token "glrt-GENERAL" \
+  #     --executor docker --docker-image alpine:latest
+  #   docker exec gitlab-runner gitlab-runner register --non-interactive \
+  #     --url "https://gitlab.${DOMAIN}" --token "glrt-DOCKER-BUILD" \
+  #     --executor docker --docker-image docker:27-cli \
+  #     --docker-volumes /var/run/docker.sock:/var/run/docker.sock
+  # Then bump `concurrent` in /srv/platform/gitlab-runner/config/config.toml.
+  gitlab-runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner
+    restart: always
+    networks:
+      - platform
+    environment:
+      TZ: America/Sao_Paulo
+    volumes:
+      - /srv/platform/gitlab-runner/config:/etc/gitlab-runner
+      # Docker executor needs full API (create/exec/attach/pull), so the
+      # dockerproxy pattern doesn't apply here — raw socket is required.
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
