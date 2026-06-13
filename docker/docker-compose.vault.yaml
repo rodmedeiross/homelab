@@ -1,0 +1,80 @@
+name: vault
+
+networks:
+  proxy:
+    name: proxy
+    external: true
+  vault_net:
+    internal: true
+
+services:
+  infisical:
+    image: infisical/infisical:${INFISICAL_VERSION:-latest}
+    container_name: infisical
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      ENCRYPTION_KEY: ${INFISICAL_ENCRYPTION_KEY}
+      AUTH_SECRET: ${INFISICAL_AUTH_SECRET}
+      DB_CONNECTION_URI: postgres://${VAULT_PG_USER}:${VAULT_PG_PASSWORD}@vault-postgres:5432/${VAULT_PG_DB}
+      REDIS_URL: redis://default:${VAULT_REDIS_PASSWORD}@vault-redis:6379
+      SITE_URL: https://vault.${DOMAIN}
+      TELEMETRY_ENABLED: "false"
+    networks:
+      - proxy
+      - vault_net
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/status || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    depends_on:
+      vault-postgres:
+        condition: service_healthy
+      vault-redis:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    labels:
+      - com.centurylinklabs.watchtower.enable=false
+
+  vault-postgres:
+    image: postgres:14-alpine
+    container_name: vault-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${VAULT_PG_USER}
+      POSTGRES_PASSWORD: ${VAULT_PG_PASSWORD}
+      POSTGRES_DB: ${VAULT_PG_DB}
+    volumes:
+      - /srv/vault/postgres:/var/lib/postgresql/data
+    networks:
+      - vault_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${VAULT_PG_USER} -d ${VAULT_PG_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    labels:
+      - com.centurylinklabs.watchtower.enable=false
+
+  vault-redis:
+    image: redis:7-alpine
+    container_name: vault-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${VAULT_REDIS_PASSWORD}
+    volumes:
+      - /srv/vault/redis:/data
+    networks:
+      - vault_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${VAULT_REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    labels:
+      - com.centurylinklabs.watchtower.enable=false

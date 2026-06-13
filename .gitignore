@@ -2,3 +2,4 @@
 docker/mcp-gateway/config/secrets.env
 **/.dev.vars
 .env
+docker/vault.env
