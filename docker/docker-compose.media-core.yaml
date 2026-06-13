@@ -144,18 +144,6 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
-  huntarr:
-    image: huntarr/huntarr:latest
-    container_name: huntarr
-    restart: unless-stopped
-    environment:
-      <<: *common-env
-    volumes:
-      - /srv/media/huntarr:/config:rw
-    networks: [media_net, proxy]
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-
   cleanuparr:
     image: ghcr.io/cleanuparr/cleanuparr:latest
     container_name: cleanuparr
