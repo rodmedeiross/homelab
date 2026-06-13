@@ -7,7 +7,12 @@ this repo folder (same pattern as the comfyui image) so repo updates apply direc
 ln -s <repo>/docker/mcp-gateway/config /srv/ai/mcp-gateway/config
 ```
 The gateway bind-mounts `/srv/ai/mcp-gateway/config:/mcp:ro`. `secrets.env` lives in
-this folder (gitignored — created only on the host).
+this folder (gitignored). It is rendered by the `infisical-agent` sidecar from the
+vault, not created by hand. Symlink the agent folder the same way:
+```
+ln -s <repo>/docker/mcp-gateway/agent /srv/ai/mcp-gateway/agent
+```
+The agent bind-mounts `/srv/ai/mcp-gateway/config:/out` and writes `secrets.env` there.
 
 ## Files
 - `catalog.yaml` — server catalog. Exposes one server, `honcho`, as a `remote`

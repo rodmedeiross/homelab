@@ -1,0 +1,17 @@
+infisical:
+  address: "http://infisical:8080"
+auth:
+  type: "universal-auth"
+  config:
+    client-id: "/auth/client-id"
+    client-secret: "/auth/client-secret"
+    remove_client_secret_on_read: false
+sinks:
+  - type: "file"
+    config:
+      path: "/auth/access-token"
+templates:
+  - source-path: /auth/secrets.tpl
+    destination-path: /out/secrets.env
+    config:
+      polling-interval: 60s
