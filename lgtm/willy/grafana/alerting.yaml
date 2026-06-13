@@ -1,0 +1,139 @@
+# Grafana unified-alerting provisioning for the otel-lgtm stack on Willy.
+# Mounted read-only at /otel-lgtm/grafana/conf/provisioning/alerting/homelab.yaml
+# (grafana homepath = /otel-lgtm/grafana, provisioning = conf/provisioning;
+#  data dir is /data/grafana/data but conf/provisioning stays on the image).
+#
+# Scope: RESOURCE alerts only (disk, memory) — things Prometheus actually has.
+# Host-down / container-down are NOT here: Alloy ships metrics via remote_write
+# (push), so Prometheus has no `up` series and no container metrics. Those live
+# in Uptime Kuma (active prober, native Docker monitor). See memory:
+# notification-stack-topology.
+apiVersion: 1
+
+# --- where alerts go ---------------------------------------------------------
+contactPoints:
+  - orgId: 1
+    name: homelab
+    receivers:
+      # push to ntfy over the internal proxy network (survives public DNS/TLS
+      # outages, which is exactly when you want the alert)
+      - uid: homelab_ntfy
+        type: webhook
+        disableResolveMessage: false
+        settings:
+          url: http://ntfy/grafana-alerts
+          httpMethod: POST
+      # email via mercuria -> ZeptoMail -> Cloudflare router -> inbox
+      - uid: homelab_email
+        type: email
+        disableResolveMessage: false
+        settings:
+          addresses: $__env{WATCHTOWER_EMAIL_TO}
+          singleEmail: false
+
+# --- routing -----------------------------------------------------------------
+# Everything goes to the single `homelab` contact point (ntfy + email together).
+# Group by host+alert so a host filling 3 mounts doesn't spam 3 separate pages.
+# To cut email noise later: split into ntfy-only root + a severity=critical
+# child route that adds email.
+policies:
+  - orgId: 1
+    receiver: homelab
+    group_by: ["alertname", "instance"]
+    group_wait: 30s
+    group_interval: 5m
+    repeat_interval: 4h
+
+# --- rules -------------------------------------------------------------------
+groups:
+  - orgId: 1
+    name: homelab-resources
+    folder: Homelab
+    interval: 1m
+    rules:
+      # Disk >85% on any real filesystem of any host (warning)
+      - uid: homelab_disk_warn
+        title: "Disk usage high (>85%)"
+        condition: C
+        for: 10m
+        noDataState: OK
+        execErrState: Alerting
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Disk {{ index $labels "mountpoint" }} on {{ index $labels "instance" }} is {{ printf "%.0f" $values.A.Value }}% full'
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: prometheus
+            model:
+              refId: A
+              instant: true
+              expr: '100 * (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs"}))'
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              datasource: { type: __expr__, uid: __expr__ }
+              conditions:
+                - evaluator: { type: gt, params: [85] }
+
+      # Disk >95% on any real filesystem of any host (critical)
+      - uid: homelab_disk_crit
+        title: "Disk usage critical (>95%)"
+        condition: C
+        for: 5m
+        noDataState: OK
+        execErrState: Alerting
+        labels:
+          severity: critical
+        annotations:
+          summary: 'CRITICAL: disk {{ index $labels "mountpoint" }} on {{ index $labels "instance" }} is {{ printf "%.0f" $values.A.Value }}% full'
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: prometheus
+            model:
+              refId: A
+              instant: true
+              expr: '100 * (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs"}))'
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              datasource: { type: __expr__, uid: __expr__ }
+              conditions:
+                - evaluator: { type: gt, params: [95] }
+
+      # Memory >90% on any host (warning)
+      - uid: homelab_mem_warn
+        title: "Memory usage high (>90%)"
+        condition: C
+        for: 10m
+        noDataState: OK
+        execErrState: Alerting
+        labels:
+          severity: warning
+        annotations:
+          summary: 'Memory on {{ index $labels "instance" }} is {{ printf "%.0f" $values.A.Value }}% used'
+        data:
+          - refId: A
+            relativeTimeRange: { from: 600, to: 0 }
+            datasourceUid: prometheus
+            model:
+              refId: A
+              instant: true
+              expr: '100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))'
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              datasource: { type: __expr__, uid: __expr__ }
+              conditions:
+                - evaluator: { type: gt, params: [90] }

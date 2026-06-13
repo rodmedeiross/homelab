@@ -121,6 +121,8 @@ services:
       GF_SMTP_FROM_NAME: "Grafana (Willy)"
       GF_SMTP_STARTTLS_POLICY: "OpportunisticStartTLS"
       GF_SMTP_SKIP_VERIFY: "true"
+      # Destination for provisioned alert emails (read by alerting.yaml via $__env)
+      WATCHTOWER_EMAIL_TO: "${WATCHTOWER_EMAIL_TO}"
       # Retention. Loki retention lives in the mounted loki-config.yaml (compactor);
       # Prometheus and Pyroscope take CLI flags via *_EXTRA_ARGS. Tempo is tiny, left default.
       PROMETHEUS_EXTRA_ARGS: "--storage.tsdb.retention.time=90d"
@@ -129,6 +131,7 @@ services:
     volumes:
       - /srv/infra/lgtm/data:/data
       - ../lgtm/willy/loki-config.yaml:/otel-lgtm/loki-config.yaml:ro
+      - ../lgtm/willy/grafana/alerting.yaml:/otel-lgtm/grafana/conf/provisioning/alerting/homelab.yaml:ro
     ports:
       - "9090:9090" # Prometheus scrape
       - "3100:3100" # Loki logs
