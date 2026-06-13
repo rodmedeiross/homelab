@@ -86,6 +86,8 @@ services:
     depends_on:
       honcho-mcp:
         condition: service_healthy
+      infisical-agent:
+        condition: service_healthy
     command:
       - --transport=streaming
       - --port=8811
@@ -101,6 +103,31 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=true
 
+  # Renders /mcp/secrets.env from Infisical before the gateway starts.
+  infisical-agent:
+    image: infisical/cli:latest
+    container_name: infisical-agent
+    restart: unless-stopped
+    entrypoint: ["/bin/sh", "/agent/entrypoint.sh"]
+    environment:
+      - INFISICAL_AGENT_CLIENT_ID=${INFISICAL_AGENT_CLIENT_ID}
+      - INFISICAL_AGENT_CLIENT_SECRET=${INFISICAL_AGENT_CLIENT_SECRET}
+      - INFISICAL_PROJECT_ID=${INFISICAL_PROJECT_ID}
+    volumes:
+      - /srv/ai/mcp-gateway/agent:/agent:ro
+      - /srv/ai/mcp-gateway/config:/out
+    tmpfs:
+      - /auth
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /out/secrets.env"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    networks: [proxy]
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
   # Honcho MCP worker wraps the remote honcho-api as an MCP server for the gateway.
   honcho-mcp:
     image: harbor.${DOMAIN}/homelab/honcho-mcp:latest
@@ -110,7 +137,13 @@ services:
       - HONCHO_API_URL=${HONCHO_API_URL}
     # Gate the gateway on this: TCP-connect to 8787 once wrangler dev has bound it.
     healthcheck:
-      test: ["CMD", "node", "-e", "require('net').connect(8787,'127.0.0.1').on('connect',()=>process.exit(0)).on('error',()=>process.exit(1))"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "require('net').connect(8787,'127.0.0.1').on('connect',()=>process.exit(0)).on('error',()=>process.exit(1))",
+        ]
       interval: 10s
       timeout: 5s
       retries: 6
