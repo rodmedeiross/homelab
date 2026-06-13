@@ -20,6 +20,12 @@ services:
       REDIS_URL: redis://default:${VAULT_REDIS_PASSWORD}@vault-redis:6379
       SITE_URL: https://vault.${DOMAIN}
       TELEMETRY_ENABLED: "false"
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: 25
+      SMTP_FROM_ADDRESS: infisical@${DOMAIN}
+      SMTP_FROM_NAME: Infisical
+      SMTP_IGNORE_TLS: "true"
+      SMTP_REQUIRE_TLS: "false"
     networks:
       - proxy
       - vault_net
