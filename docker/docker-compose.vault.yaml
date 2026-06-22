@@ -84,3 +84,27 @@ services:
       retries: 10
     labels:
       - com.centurylinklabs.watchtower.enable=false
+
+  vault-postgres-backup:
+    image: harbor.${DOMAIN}/homelab/postgres-backup:latest
+    container_name: vault-postgres-backup
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: vault-postgres
+      POSTGRES_DB: ${VAULT_PG_DB}
+      POSTGRES_USER: ${VAULT_PG_USER}
+      POSTGRES_PASSWORD: ${VAULT_PG_PASSWORD}
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 14
+      BACKUP_KEEP_WEEKS: 8
+      BACKUP_KEEP_MONTHS: 12
+      TZ: America/Sao_Paulo
+    volumes:
+      - /mnt/sokolov/backups/postgres/vault-postgres:/backups
+    networks:
+      - vault_net
+    depends_on:
+      vault-postgres:
+        condition: service_healthy
+    labels:
+      - com.centurylinklabs.watchtower.enable=false
