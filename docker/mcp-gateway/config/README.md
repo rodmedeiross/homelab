@@ -6,7 +6,9 @@ this repo folder (same pattern as the comfyui image) so repo updates apply direc
 ```
 ln -s <repo>/docker/mcp-gateway/config /srv/ai/mcp-gateway/config
 ```
-The gateway bind-mounts `/srv/ai/mcp-gateway/config:/mcp:ro`. `secrets.env` lives in
+The gateway bind-mounts `/srv/ai/mcp-gateway/config:/root/.docker/mcp/catalogs:ro` —
+newer gateway images enforce a trusted-root check and only read catalogs under
+`~/.docker/mcp/catalogs`. `secrets.env` lives in
 this folder (gitignored). It is rendered by the `infisical-agent` sidecar from the
 vault, not created by hand. Symlink the agent folder the same way:
 ```
@@ -15,10 +17,11 @@ ln -s <repo>/docker/mcp-gateway/agent /srv/ai/mcp-gateway/agent
 The agent bind-mounts `/srv/ai/mcp-gateway/config:/out` and writes `secrets.env` there.
 
 ## Files
-- `catalog.yaml` — server catalog. Exposes one server, `honcho`, as a `remote`
-  (streamable-http) entry pointing at the `honcho-mcp` worker (same host, `mcp_net`).
-- `secrets.env` — **not in git**. Holds `HONCHO_API_KEY` (Honcho admin JWT), injected
-  into the upstream `Authorization` header. Create from `secrets.env.example`.
+- `catalog.yaml` — server catalog. Two `remote` (streamable-http) entries: `honcho`
+  (via the `honcho-mcp` worker) and `ai-memory` (project-memory wiki, same host).
+- `secrets.env` — **not in git**. Holds `HONCHO_API_KEY` (Honcho admin JWT) and
+  `AI_MEMORY_AUTH_TOKEN` (as `ai-memory.token`), injected into the upstream
+  `Authorization` headers. Rendered by the infisical-agent.
 
 ## Topology
 The gateway and the `honcho-mcp` worker run together on one host (local bridge

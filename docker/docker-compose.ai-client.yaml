@@ -93,12 +93,15 @@ services:
     command:
       - --transport=streaming
       - --port=8811
-      - --catalog=/mcp/catalog.yaml
+      # Newer gateway images enforce a trusted-root check: catalog files must
+      # live under ~/.docker/mcp/catalogs (root user here), so the config dir
+      # is mounted there and both flags point inside it.
+      - --catalog=/root/.docker/mcp/catalogs/catalog.yaml
       # --servers replaces registry.yaml: just name the catalog entries to enable.
       - --servers=honcho,ai-memory
-      - --secrets=/mcp/secrets.env
+      - --secrets=/root/.docker/mcp/catalogs/secrets.env
     volumes:
-      - /srv/ai/mcp-gateway/config:/mcp:ro
+      - /srv/ai/mcp-gateway/config:/root/.docker/mcp/catalogs:ro
     ports:
       - "8811:8811"
     networks: [proxy, mcp_net]
