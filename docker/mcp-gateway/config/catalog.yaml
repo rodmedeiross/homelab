@@ -22,3 +22,18 @@ registry:
       - name: honcho.api_key
         env: HONCHO_API_KEY
     tools: []
+  ai-memory:
+    description: Self-hosted project-memory wiki (ai-memory) for rodmedeiross.
+    title: AI Memory
+    type: remote
+    ref: ""
+    remote:
+      transport_type: streamable-http
+      url: http://ai-memory:49374/mcp
+      # Gateway injects the bearer so MCP clients never carry the token.
+      headers:
+        Authorization: "Bearer ${AI_MEMORY_TOKEN}"
+    secrets:
+      - name: ai-memory.token
+        env: AI_MEMORY_TOKEN
+    tools: []

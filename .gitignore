@@ -3,3 +3,6 @@ docker/mcp-gateway/config/secrets.env
 **/.dev.vars
 .env
 docker/vault.env
+
+# Local-only tooling and runbook (personal machine paths, one-shot migration)
+docker/ai-memory/

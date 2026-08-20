@@ -76,15 +76,17 @@ services:
     image: docker/mcp-gateway:latest
     container_name: mcp-gateway
     restart: unless-stopped
-    # No raw docker.sock: only server is `honcho` (remote), so the gateway never
+    # No raw docker.sock: all servers are remote, so the gateway never
     # spawns stdio containers. Point it at the existing read-mostly socket proxy
     # (infra-core `dockerproxy`, POST=0) so any docker ping is filtered.
     environment:
       - DOCKER_HOST=tcp://dockerproxy:2375
     # The gateway enumerates remote tools once at boot and does not retry, so it
-    # must start only after honcho-mcp is actually listening (wrangler dev is slow).
+    # must start only after honcho-mcp and ai-memory are actually listening.
     depends_on:
       honcho-mcp:
+        condition: service_healthy
+      ai-memory:
         condition: service_healthy
       infisical-agent:
         condition: service_healthy
@@ -93,7 +95,7 @@ services:
       - --port=8811
       - --catalog=/mcp/catalog.yaml
       # --servers replaces registry.yaml: just name the catalog entries to enable.
-      - --servers=honcho
+      - --servers=honcho,ai-memory
       - --secrets=/mcp/secrets.env
     volumes:
       - /srv/ai/mcp-gateway/config:/mcp:ro
@@ -151,3 +153,28 @@ services:
     networks: [mcp_net]
     labels:
       - com.centurylinklabs.watchtower.enable=true
+
+  # Project-memory wiki (github.com/akitaonrails/ai-memory). MCP clients reach
+  # it through the gateway; hooks/CLI/web UI come in via NPM over TLS — no host
+  # port on purpose. Digest-pinned (fast-moving upstream): bump deliberately,
+  # so no watchtower label. Healthcheck ships in the image.
+  ai-memory:
+    image: akitaonrails/ai-memory:1.29.0@sha256:1d8a2ca7d7bc2349ba964d2d97dafb683632676460c1e373083f919a18c60d37
+    container_name: ai-memory
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      TZ: America/Sao_Paulo
+      AI_MEMORY_AUTH_TOKEN: ${AI_MEMORY_AUTH_TOKEN}
+      # Host-header allowlist (DNS-rebinding guard). Setting it REPLACES the
+      # image default, so loopback entries must be repeated (healthcheck).
+      AI_MEMORY_ALLOWED_HOSTS: "localhost,127.0.0.1,::1,ai-memory,ai-memory.${DOMAIN}"
+      # Consolidation LLM via LiteLLM (mobydick). All four unset = zero-LLM
+      # mode: FTS5 search + rule-based summaries, still fully functional.
+      AI_MEMORY_LLM_PROVIDER: ${AI_MEMORY_LLM_PROVIDER:-}
+      AI_MEMORY_LLM_MODEL: ${AI_MEMORY_LLM_MODEL:-}
+      LLM_BASE_URL: ${AI_MEMORY_LLM_BASE_URL:-}
+      LLM_API_KEY: ${AI_MEMORY_LLM_API_KEY:-}
+    volumes:
+      - /srv/ai/ai-memory/data:/data
+    networks: [proxy, mcp_net]
