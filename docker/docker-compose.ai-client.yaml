@@ -73,7 +73,11 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   mcp-gateway:
-    image: docker/mcp-gateway:latest
+    # Pinned: v0.43.1+ hardened the gateway (catalog dir confinement, https-only
+    # remote URLs, client bearer auth on by default) and breaks this http-internal
+    # topology. v0.42.3 is the last pre-hardening release. Deliberate migration to
+    # the new line (opt-out envs vs TLS-internal redesign) is a planned follow-up.
+    image: docker/mcp-gateway:v0.42.3@sha256:08a1798da195a3ed5770c1daa85b7cfbd1e2d852ff9da5c2f956422b08be8f21
     container_name: mcp-gateway
     restart: unless-stopped
     # No raw docker.sock: all servers are remote, so the gateway never
@@ -105,8 +109,7 @@ services:
     ports:
       - "8811:8811"
     networks: [proxy, mcp_net]
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
+    # No watchtower label: digest-pinned, bumps are deliberate.
 
   # Renders /mcp/secrets.env from Infisical before the gateway starts.
   infisical-agent:
