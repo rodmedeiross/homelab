@@ -165,7 +165,7 @@ services:
   # port on purpose. Digest-pinned (fast-moving upstream): bump deliberately,
   # so no watchtower label. Healthcheck ships in the image.
   ai-memory:
-    image: akitaonrails/ai-memory:1.29.0@sha256:1d8a2ca7d7bc2349ba964d2d97dafb683632676460c1e373083f919a18c60d37
+    image: akitaonrails/ai-memory:2.1.1@sha256:65a98179a0f8284d2488fceb53fe3764ebfecdb4fb19275a3ed51d1aec1e5eb4
     container_name: ai-memory
     restart: unless-stopped
     user: "1000:1000"
@@ -181,6 +181,13 @@ services:
       AI_MEMORY_LLM_MODEL: ${AI_MEMORY_LLM_MODEL:-}
       LLM_BASE_URL: ${AI_MEMORY_LLM_BASE_URL:-}
       LLM_API_KEY: ${AI_MEMORY_LLM_API_KEY:-}
+      # Hybrid retrieval (2.x): embeddings via LiteLLM on mobydick, same model
+      # honcho uses (local-embed = nomic-embed-text, 768d). The openai-compat
+      # embedding client reuses LLM_API_KEY as bearer; no extra secret needed.
+      AI_MEMORY_EMBEDDING_PROVIDER: ${AI_MEMORY_EMBEDDING_PROVIDER:-openai-compat}
+      AI_MEMORY_EMBEDDING_BASE_URL: ${AI_MEMORY_EMBEDDING_BASE_URL:-http://10.10.1.30:4000/v1}
+      AI_MEMORY_EMBEDDING_MODEL: ${AI_MEMORY_EMBEDDING_MODEL:-local-embed}
+      AI_MEMORY_EMBEDDING_DIM: ${AI_MEMORY_EMBEDDING_DIM:-768}
     volumes:
       - /srv/ai/ai-memory/data:/data
     networks: [proxy, mcp_net]
