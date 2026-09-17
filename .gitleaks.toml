@@ -1,0 +1,19 @@
+# Secret scanning rules for this repo (public on GitHub).
+# Used by the pre-commit hook and by any full-history scan.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Template files ship empty placeholders, not secrets"
+paths = [
+  '''\.example$''',
+  '''\.sample$''',
+]
+
+[[allowlists]]
+description = "Compose files reference secrets by variable, never by value"
+regexes = [
+  '''\$\{[A-Z_][A-Z0-9_]*(:-[^}]*)?\}''',
+  '''os\.environ/[A-Z_]+''',
+]
