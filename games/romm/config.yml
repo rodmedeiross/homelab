@@ -1,0 +1,4 @@
+filesystem:
+  structure:
+    default: "{platform}/roms/{game}"
+    firmware: "{platform}/bios"
