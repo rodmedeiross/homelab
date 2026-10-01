@@ -14,7 +14,7 @@ x-common-env: &common-env
 
 services:
   romm:
-    image: rommapp/romm:5.3.1
+    image: rommapp/romm:5
     container_name: romm
     restart: unless-stopped
     environment:
@@ -40,8 +40,8 @@ services:
       - romm_redis_data:/redis-data
       - /mnt/sokolov/media/Games/roms:/romm/library:rw
       - /srv/games/romm/assets:/romm/assets:rw
-      # Source of truth: games/romm/config.yml (copied to this host bind)
-      - /srv/games/romm/config:/romm/config:rw
+      # Source of truth: games/romm/config.yml; the host path is a symlink into the repo clone
+      - /srv/games/romm/config:/romm/config:ro
     ports:
       - 8383:8080
     networks: [games_net]
