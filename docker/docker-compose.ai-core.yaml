@@ -201,6 +201,11 @@ services:
       # Summary — short/long summary generation runs inside the deriver worker
       - SUMMARY_MODEL_CONFIG__TRANSPORT=openai
       - SUMMARY_MODEL_CONFIG__MODEL=local-smart
+      # Dreams — induction/deduction specialists default to a hosted model upstream
+      - DREAM_DEDUCTION_MODEL_CONFIG__TRANSPORT=openai
+      - DREAM_DEDUCTION_MODEL_CONFIG__MODEL=local-smart
+      - DREAM_INDUCTION_MODEL_CONFIG__TRANSPORT=openai
+      - DREAM_INDUCTION_MODEL_CONFIG__MODEL=local-smart
       # Embeddings — route via LiteLLM to local nomic-embed-text (768d)
       - EMBEDDING_MODEL_CONFIG__TRANSPORT=openai
       - EMBEDDING_MODEL_CONFIG__MODEL=local-embed
