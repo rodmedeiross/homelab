@@ -1,6 +1,9 @@
 #!/bin/sh
 set -e
 
+# Rendered files hold live secrets; keep them readable by root only.
+umask 077
+
 # Bootstrap credentials and project id come from env, never committed.
 printf '%s' "$INFISICAL_AGENT_CLIENT_ID" > /auth/client-id
 printf '%s' "$INFISICAL_AGENT_CLIENT_SECRET" > /auth/client-secret
