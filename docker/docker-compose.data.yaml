@@ -54,7 +54,7 @@ services:
       - com.centurylinklabs.watchtower.enable=true
 
   postgres:
-    image: postgres:latest
+    image: postgres:18
     container_name: postgres
     restart: unless-stopped
     environment:
