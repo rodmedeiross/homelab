@@ -26,8 +26,11 @@ services:
     volumes:
       - /srv/npm/data:/data
       - /srv/npm/letsencrypt:/etc/letsencrypt
+      - /srv/npm/custom:/data/nginx/custom
     environment:
       TZ: America/Sao_Paulo
+      PUID: 1000
+      PGID: 1000
     networks:
       - proxy
       - media_net
