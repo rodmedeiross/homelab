@@ -31,6 +31,7 @@ services:
       TZ: America/Sao_Paulo
       PUID: 1000
       PGID: 1000
+      SKIP_CERTBOT_OWNERSHIP: "true"
     networks:
       - proxy
       - media_net
