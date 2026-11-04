@@ -198,6 +198,7 @@ services:
       - LLM_OPENAI_API_KEY=${HONCHO_DERIVER_KEY}
       - DERIVER_MODEL_CONFIG__TRANSPORT=openai
       - DERIVER_MODEL_CONFIG__MODEL=local-deriver
+      - DERIVER_WORKERS=2
       # Summary — short/long summary generation runs inside the deriver worker
       - SUMMARY_MODEL_CONFIG__TRANSPORT=openai
       - SUMMARY_MODEL_CONFIG__MODEL=local-smart
